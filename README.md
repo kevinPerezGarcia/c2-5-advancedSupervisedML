@@ -5,10 +5,10 @@ AÑo 2024 <br>
 UNIVERSIDAD NACIONAL DE INGENIERÍA <br>
 FACULTAD DE INGENIERÍA ECONÓMICA, ESTADÍSTICA Y CIENCIAS SOCIALES <br>
 MAESTRÍA EN DATA SCIENCE <br>
-CICLO # <br>
+CICLO 2 <br>
 </p>
 
-<h1>NOMBRE DEL CURSO</h1>
+<h1>ADVANCED SUPERVISED MACHINE LEARNING</h1>
 
 # 👥 Alumno
 
@@ -34,10 +34,10 @@ Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.
 
 # Información del curso
 
-* Créditos: #
-* Cantidad de horas: #
-* Número de sesiones: #
-* Profesor: [Nombres y apellidos del docente](Enlace de LinkedIn)
+* Créditos: 2
+* Cantidad de horas: 24
+* Número de sesiones: 8
+* Profesor: [Manuel Valdivia Carbajal](https://www.linkedin.com/in/manuel-valdivia-73534760/)
 
 # Contenido del curso
 
