@@ -38,6 +38,7 @@ Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.
 * Cantidad de horas: 24
 * Número de sesiones: 8
 * Profesor: [Manuel Valdivia Carbajal](https://www.linkedin.com/in/manuel-valdivia-73534760/)
+* Lenguaje de programación a usar: Python
 
 # Contenido del curso
 
