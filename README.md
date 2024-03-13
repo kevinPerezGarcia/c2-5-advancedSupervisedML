@@ -1,7 +1,7 @@
 ![logo](https://github.com/kevinPerezGarcia/kevinPerezGarcia/blob/main/logo.png)
 
 <p>
-AÑo 2024 <br>
+AÑO 2024 <br>
 UNIVERSIDAD NACIONAL DE INGENIERÍA <br>
 FACULTAD DE INGENIERÍA ECONÓMICA, ESTADÍSTICA Y CIENCIAS SOCIALES <br>
 MAESTRÍA EN DATA SCIENCE <br>
@@ -38,7 +38,7 @@ Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.
 * Cantidad de horas: 24
 * Número de sesiones: 8
 * Profesor: [Manuel Valdivia Carbajal](https://www.linkedin.com/in/manuel-valdivia-73534760/)
-* Lenguaje de programación a usar: Python
+* Software a usar: Lenguaje de programación Python
 
 # Contenido del curso
 
