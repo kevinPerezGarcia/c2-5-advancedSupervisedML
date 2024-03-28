@@ -29,7 +29,7 @@ Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.
 - [📌 Tabla de contenido](#-tabla-de-contenido)
 - [Información del curso](#información-del-curso)
 - [Contenido del curso](#contenido-del-curso)
-  - [Sesión #.](#sesión-)
+  - [Sesión 1. Comparación del rendimiento de generalización de modelos estadísticos y de modelos computacionales](#sesión-1-comparación-del-rendimiento-de-generalización-de-modelos-estadísticos-y-de-modelos-computacionales)
 - [Bibliografía](#bibliografía)
 
 # Información del curso
@@ -42,6 +42,6 @@ Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.
 
 # Contenido del curso
 
-## Sesión #.
+## [Sesión 1](/sesion1/). Comparación del rendimiento de generalización de modelos estadísticos y de modelos computacionales
 
 # Bibliografía
