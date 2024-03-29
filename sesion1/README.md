@@ -6,13 +6,13 @@ UNIVERSIDAD NACIONAL DE INGENIERÍA <br>
 FACULTAD DE INGENIERÍA ECONÓMICA, ESTADÍSTICA Y CIENCIAS SOCIALES <br>
 MAESTRÍA EN DATA SCIENCE <br>
 CICLO 2 <br>
-ADVANCED MACHINE LEARNING
+ADVANCED MACHINE LEARNING <br>
 SESION 1
 </p>
 
-<h1>PRÁCTICA DIRIGIDA. COMPARACIÓN DEL RENDIMIENTO DE GENERALIZACIÓN DE MODELOS ESTADÍSTICOS Y DE MODELOS COMPUTACIONALES</h1>
+# PRÁCTICA DIRIGIDA. COMPARACIÓN DEL RENDIMIENTO DE GENERALIZACIÓN DE MODELOS ESTADÍSTICOS Y DE MODELOS COMPUTACIONALES
 
-# 👥 Autor
+## 👥 Autor
 
 [@Kevin Perez Garcia](https://www.linkedin.com/in/kevinperezgarcia)
 
@@ -20,12 +20,7 @@ SESION 1
 
 📞 Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.com`.
 
-# 📌 Tabla de contenido
-- [👥 Autor](#-autor)
-- [📌 Tabla de contenido](#-tabla-de-contenido)
-- [Información de la sesión](#información-de-la-sesión)
-
-# Información de la sesión
+## Información de la sesión
 
 Objetivo de la práctica dirigida: comparar el rendimiento de generalización de algoritmos estadísticos y algoritmos computacionales. Para ello se desarrolla el siguiente proyecto:
 
