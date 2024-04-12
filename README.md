@@ -29,4 +29,5 @@ CICLO 2 <br>
 ## 📌 Contenido del curso
 
 * [Sesión 1](/sesion1/). Comparación del rendimiento de generalización de modelos estadísticos y de modelos computacionales
+* [Tema 2](/sesion2/). Modelo lightGBM y optimización de hiperparámetros
 * [Tema 3](/sesion3/). Modelos lineales generalizados mixtos
