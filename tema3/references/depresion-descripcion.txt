@@ -1,0 +1,20 @@
+
+#
+# Base de datos depresión (Agresti, 2103)
+#
+
+Descripción:
+
+Estudio longitudinal comparando un nuevo tratamiento vs. un tratamiento éstandar
+en 340 sujetos que sufren de depresión mental. Los sujetos fueron clasificados 
+inicialmente en dos grupos de acuerdo a la severidad de su depresión. En cada grupo
+los sujetos fueron aleatorizados a recibir una de las dos drogas. Los seguimientos se
+dieron a la 1, 2 y 4 semanas de tratamiento. En cada medición el sujeto fue clasificado como 
+normal o anormal
+
+Variables
+case     : ID del paciente
+severity : 0 (leve) y 1 (severo)
+treat    : 0 (éstandar) y 1 (nueva droga)
+time     : 0(1 semana), 1 (2 semanas) y 2 (4 semanas) 
+outcome   : 0(anormal) y 1 (normal)
