@@ -1,0 +1,39 @@
+Study of Influence of Menarche on Changes in Body Fat Accretion
+
+
+Source: Data courtesy of Drs. Aviva Must and Elena Naumova.
+
+Reference: Phillips, S.M., Bandini, L.G., Compton, D.V., Naumova, E.N.
+and Must, A. (2003). A longitudinal comparison of body composition
+by total body water and bioelectrical impedance in adolescent girls. 
+Journal of Nutrition, 133, 1419-1425.
+
+
+Description:
+
+The data are from a prospective study on body fat accretion in a cohort of 
+162 girls from the MIT Growth and Development Study. The study examined changes
+in percent body fat before and after menarche. The data represent a subset of 
+the study materials and should not be used to draw substantive conclusions.
+
+At the start of the study, all of the girls were pre-menarcheal and non-obese, 
+as determined by a triceps skinfold thickness less than the 85th percentile. 
+All girls were followed over time according to a schedule of annual measurements
+until four years after menarche. The final measurement was scheduled on the 
+fourth anniversary of their reported date of menarche.  At each examination, 
+a measure of body fatness was obtained based on bioelectric impedance analysis 
+and a measure of percent body fat (%BF) was derived. In this data set there are
+a total of 1049 individual percent body fat measurements, with an average of 6.4
+measurements per subject. The numbers of measurements per subject pre- and post-menarche 
+are approximately equal.
+
+Note: Time is coded as time since menarche and can be positive or negative. 
+Although the measurement protocol is the same for all girls and the study 
+design is balanced if the timing of measurement is defined as the time since 
+the baseline measurement, it is inherently unbalanced when the timing of
+measurements is defined as the time since a girl experienced
+menarche.
+
+
+Variable List: Subject ID, Current Age (years), Age at Menarche (years), 
+Time relative to Menarche (years), Percent Body Fat.
