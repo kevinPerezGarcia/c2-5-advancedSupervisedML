@@ -1,18 +1,16 @@
 ![logo](https://github.com/kevinPerezGarcia/kevinPerezGarcia/blob/main/logo.png)
 
-<p>
-AÑO 2024 <br>
-UNIVERSIDAD NACIONAL DE INGENIERÍA <br>
-FACULTAD DE INGENIERÍA ECONÓMICA, ESTADÍSTICA Y CIENCIAS SOCIALES <br>
-MAESTRÍA EN DATA SCIENCE <br>
-CICLO # <br>
-CURSO
-SESION #. TEMA DE LA SESION
-</p>
+> Año 2024 <br>
+Universidad Nacional de Ingeniería <br>
+Facultad de Ingeniería Económica, Estadística y Ciencias Sociales <br>
+Maestría en Data Science <br>
+Ciclo 2 <br>
+Advanced Machine Learning <br>
+Tema 6. Comparación de Modelos GAM y LightGBM
 
-<h1>PRÁCTICA 'DIRIGIDA O CALIFICADA'. TEMA DE LA APLICACIÓN</h1>
+# Práctica Dirigida. Fuga en Clientes de una Institución Bancaria
 
-# 👥 Autor
+## 👥 Alumno
 
 [@Kevin Perez Garcia](https://www.linkedin.com/in/kevinperezgarcia)
 
@@ -20,12 +18,12 @@ SESION #. TEMA DE LA SESION
 
 📞 Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.com`.
 
-# 📌 Tabla de contenido
-- [👥 Autor](#-autor)
-- [📌 Tabla de contenido](#-tabla-de-contenido)
-- [Contenido de la sesión](#contenido-de-la-sesión)
-- [Bibliografía](#bibliografía)
+## 📌 Tabla de contenido
+- [Práctica Dirigida. Fuga en Clientes de una Institución Bancaria](#práctica-dirigida-fuga-en-clientes-de-una-institución-bancaria)
+  - [👥 Alumno](#-alumno)
+  - [📌 Tabla de contenido](#-tabla-de-contenido)
+  - [Contenido de la sesión](#contenido-de-la-sesión)
 
-# Contenido de la sesión
+## Contenido de la sesión
 
-# Bibliografía
+Objetivo: Comparar el rendimiento de generalización de un modelo GAM vs un modelo LightGBM
