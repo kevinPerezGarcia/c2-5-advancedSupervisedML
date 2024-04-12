@@ -1,16 +1,14 @@
 ![logo](https://github.com/kevinPerezGarcia/kevinPerezGarcia/blob/main/logo.png)
 
-<p>
-AÑO 2024 <br>
-UNIVERSIDAD NACIONAL DE INGENIERÍA <br>
-FACULTAD DE INGENIERÍA ECONÓMICA, ESTADÍSTICA Y CIENCIAS SOCIALES <br>
-MAESTRÍA EN DATA SCIENCE <br>
-CICLO 2 <br>
-</p>
+> Año 2024 <br>
+Universidad Nacional de Ingeniería <br>
+Facultad de Ingeniería Económica, Estadística y Ciencias Sociales <br>
+Maestría en Data Science <br>
+Ciclo 2
 
-# ADVANCED SUPERVISED MACHINE LEARNING
+# Advanced Supervised Machine Learning
 
-## 👥 Autor
+## 👥 Alumno
 
 [@Kevin Perez Garcia](https://www.linkedin.com/in/kevinperezgarcia)
 
@@ -24,12 +22,12 @@ CICLO 2 <br>
 * Cantidad de horas: 24
 * Número de sesiones: 8
 * Profesor: [Manuel Valdivia Carbajal](https://www.linkedin.com/in/manuel-valdivia-73534760/)
-* Software a usar: Lenguaje de programación Python
+* Software a usar: Entre sesiones puede utilizarse Python ó R
 
 ## 📌 Contenido del curso
 
-* [Sesión 1](/sesion1/). Comparación del rendimiento de generalización de modelos estadísticos y de modelos computacionales
-* [Tema 2](/sesion2/). Modelo lightGBM y optimización de hiperparámetros
-* [Tema 3](/sesion3/). Modelos lineales generalizados mixtos
+* [Tema 1](/tema1/). Comparación del rendimiento de generalización de modelos estadísticos y de modelos computacionales
+* [Tema 2](/tema2/). Modelo lightGBM y optimización de hiperparámetros
+* [Tema 3](/tema3/). Modelos lineales generalizados mixtos
 * [Tema 4](/tema4/). GAM y GAMLSS
-* [Tema 5](/sesion5/). Credit scoring
+* [Tema 5](/tema5/). Credit scoring
