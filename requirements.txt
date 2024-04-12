@@ -1,4 +1,8 @@
 # sesion1
+numpy
+pandas
+matplotlib
+scikit-learn
 catboost
 xgboost
 lightgbm
