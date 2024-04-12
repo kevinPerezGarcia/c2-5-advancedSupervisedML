@@ -3,3 +3,10 @@
 
 # Materiales de cada sesión
 **/material/
+
+# sesion5
+/sesion5/notebooks/code-alumno-funciones.R
+/sesion5/notebooks/code-alumno.R
+/sesion5/notebooks/code-profesor.Rmd
+/sesion5/reports/script_model.html
+/sesion5/references/presentacion.pdf
