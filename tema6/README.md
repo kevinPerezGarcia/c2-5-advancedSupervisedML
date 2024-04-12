@@ -6,9 +6,9 @@ Facultad de Ingeniería Económica, Estadística y Ciencias Sociales <br>
 Maestría en Data Science <br>
 Ciclo 2 <br>
 Advanced Machine Learning <br>
-Tema 6. Comparación de Modelos GAM y LightGBM
+Trabajo Inicial
 
-# Práctica Dirigida. Fuga en Clientes de una Institución Bancaria
+# Fuga de Clientes en una Institución Bancaria
 
 ## 👥 Alumno
 
@@ -19,11 +19,17 @@ Tema 6. Comparación de Modelos GAM y LightGBM
 📞 Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.com`.
 
 ## 📌 Tabla de contenido
-- [Práctica Dirigida. Fuga en Clientes de una Institución Bancaria](#práctica-dirigida-fuga-en-clientes-de-una-institución-bancaria)
+- [Fuga de Clientes en una Institución Bancaria](#fuga-de-clientes-en-una-institución-bancaria)
   - [👥 Alumno](#-alumno)
   - [📌 Tabla de contenido](#-tabla-de-contenido)
-  - [Contenido de la sesión](#contenido-de-la-sesión)
+  - [Información del trabajo](#información-del-trabajo)
 
-## Contenido de la sesión
+## Información del trabajo
 
-Objetivo: Comparar el rendimiento de generalización de un modelo GAM vs un modelo LightGBM
+* Fecha de entrega: 24 de abril
+* Softwares a usar: R (con más paquetes sobre GAM) o Python
+* Entregrables: Script R ó notebook de Python
+* ¿Individual o grupal? Grupal
+* Exposición: 1 integrante
+* Data: está referida a una entidad financiera
+* Objetivo: Comparar el rendimiento de generalización de al menos un modelo computacional vs un modelo GAM o un modelo GAMLSS
