@@ -31,3 +31,7 @@ Ciclo 2
 * [Tema 3](/tema3/). Modelos lineales generalizados mixtos
 * [Tema 4](/tema4/). GAM y GAMLSS
 * [Tema 5](/tema5/). Credit scoring
+
+## 📌 Contenido del curso
+
+* [Trabajo inicial](/trabajoInicial/). Modelos AdaBoost y LightGBM vs Modelo GAM
