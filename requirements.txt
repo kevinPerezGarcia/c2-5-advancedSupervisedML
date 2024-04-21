@@ -8,3 +8,5 @@ xgboost
 lightgbm
 # Trabajo inicial
 openpyxl
+seaborn
+imblearn
