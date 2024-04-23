@@ -61,10 +61,10 @@ Trabajo Inicial
 | Predictora | EDAD | Edad | mes 0 |
 | Predictora | ANTIGÜEDAD | Antigüedad | mes 0 |
 | Target | ATTRITION | Flag Attrition / deserción de clientes: attrition (1), No cae en attrition (0) | variable target |
-| Predictora | RANG_SDO_PASIVO | Saldo ahorros: rangos de menor a mayor monto (cero, rango_sdo_01, rango_sdo_02, etc) | mes 0 |
+| Predictora | RANG_SDO_PASIVO_MENOS0 | Saldo ahorros: rangos de menor a mayor monto (cero, rango_sdo_01, rango_sdo_02, etc) | mes 0 |
 | Predictora | SDO_ACTIVO | Saldo / deuda en créditos | mes -5 hasta 0 =   últimos 6 meses |
 | Predictora | FLG_SEGURO | Flag tiene algún seguro: tiene seguro (1), no tiene seguro (0) | mes -5 hasta 0 |
-| Predictora | NRO_PRODUCTOS | Número de productos con la entidad: rangos de menor a mayor cantidad de productos (rango_01,   rango_02, etc) | mes 0 |
+| Predictora | RANG_NRO_PRODUCTOS_MENOS0 | Número de productos con la entidad: rangos de menor a mayor cantidad de productos (rango_01,   rango_02, etc) | mes 0 |
 | Predictora | FLG_NOMINA | Flag nómina: si (1), no (0) | mes 0 |
 | Predictora | NRO_ACCES_CANAL1 | Nro de operaciones por el canal 1 | mes -5 hasta 0 |
 | Predictora | NRO_ACCES_CANAL2 | Nro de operaciones por el canal 2 | mes -5 hasta 0 |
