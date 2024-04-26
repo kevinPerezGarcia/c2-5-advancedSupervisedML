@@ -31,6 +31,9 @@ Ciclo 2
 * [Tema 3](/tema3/). Modelos lineales generalizados mixtos
 * [Tema 4](/tema4/). GAM y GAMLSS
 * [Tema 5](/tema5/). Credit scoring
+* Tema 6. Introducción a la fase de producción en ML. Caso: modelo de inferencia de ingreso
+
+*Nota.* Para el tema 6 no se compartió ningún material. Sin embargo, se tomaron apuntes en Notion.
 
 ## 📌 Contenido del curso
 
