@@ -6,3 +6,7 @@ scikit-learn
 catboost
 xgboost
 lightgbm
+# Trabajo inicial
+openpyxl
+seaborn
+imblearn
