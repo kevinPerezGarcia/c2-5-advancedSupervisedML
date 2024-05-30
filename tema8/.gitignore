@@ -1,0 +1,5 @@
+# quarto
+*_files\
+.vdoc.py
+*.html
+.jupyter_cache
