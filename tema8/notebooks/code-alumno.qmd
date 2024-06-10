@@ -124,26 +124,6 @@ def get_metrics(y, y_pred, y_pred_proba):
     return {'accuracy': round(accuracy, 2), 'precision': round(precision, 2), 'recall': round(recall, 2), 'entropy': round(entropy, 2), 'roc-auc': round(roc_auc, 2)}
 ```
 
-Las gráficas de evaluación las obtendremos con la siguiente función.
-
-```{python}
-def create_roc_auc_plot(clf, X_data, y_data):
-    import matplotlib.pyplot as plt
-    from sklearn import metrics
-    metrics.plot_roc_curve(clf, X_data, y_data) 
-    plt.savefig('roc_auc_curve.png')
-```
-
-La matriz de confusión la obtendremos con la siguiente función.
-
-```{python}
-def create_confusion_matrix_plot(clf, X_test, y_test):
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import plot_confusion_matrix
-    plot_confusion_matrix(clf, X_test, y_test)
-    plt.savefig('confusion_matrix.png')
-```
-
 ### Definiendo funciones sobre predicción
 
 La siguiente función permite obtener predicciones.
@@ -162,44 +142,76 @@ def predict_proba(model, X):
     return y_pred_proba
 ```
 
-## Primer experimento
+## Experimentación
+
+Importando librerías:
+
+```{python}
+import mlflow
+import mlflow.sklearn
+```
 
 ### Regresión logística
 
 ```{python}
-def train_logistic_regression(X_train, y_train):
+print("_____ Primer experimento: Regresión logística _____")
+
+exp = mlflow.set_experiment(experiment_name="Regresión Logística")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+def track_model(run_name, penalty, class_weight):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Regresión Logística",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
     from sklearn.linear_model import LogisticRegression
-    logistic_regression = LogisticRegression()
-    logistic_regression.fit(X_train, y_train)
-    return logistic_regression
-```
+    model = LogisticRegression(penalty=penalty, class_weight=class_weight)
+    model.fit(X_train, y_train)
 
-Entrenando el modelo.
+    mlflow.sklearn.log_model(model, "Regresión Logística")
+
+    params = {
+        'penalty': penalty,
+        'class_weight': class_weight
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
 
 ```{python}
-model = train_logistic_regression(X_train, y_train)
+track_model(run_name="Base", penalty='l2', class_weight=None)
+track_model(run_name="Base", penalty='l2', class_weight='balanced')
 ```
-
-Obteniendo predicciones.
-
-```{python}
-y_train_pred = predict(model, X_train)
-y_test_pred = predict(model, X_test)
-```
-
-Obteniendo probabilidades de las predicciones.
-
-```{python}
-y_train_pred_proba = predict_proba(model, X_train)
-y_test_pred_proba = predict_proba(model, X_test)
-```
-
-Obteniendo métricas:
-
-```{python}
-run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
-print(run_metrics_train)
-run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
-print(run_metrics_test)
-```
-
