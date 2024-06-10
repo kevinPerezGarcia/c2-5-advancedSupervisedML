@@ -1,0 +1,205 @@
+---
+title: Modelos Vía Ensamble para clasificación - MCD UNI
+subtitle: Subtítulo
+description: "Descripción del tema 8"
+author:
+    -   name: Kevin Pérez García
+        url: https://kevinperezgarcia.quarto.pub/data-science-portfolio/
+        affiliation: UNI - Maestría de Ciencia de Datos
+        affiliation-url: https://fieecs.uni.edu.pe/maestriasupg/
+title-block-banner: true
+date: today
+thanks: "A ti"
+format:
+    html:
+        toc: true
+        toc-float: true
+        collapsed: false
+        title-block-single: "Elaborado por"
+        theme: readable
+        highlight: kate
+        code-summary: "Ver código"
+        smooth-scroll: true
+        link-external-newwindow: true
+        citations-hover: true
+        footnotes-hover: true
+        warnings: false
+lang: "es"
+jupyter: python3
+execute: 
+    cache: true
+    freeze: true
+    echo: true
+chalkboard: true
+code-overflow: wrap
+---
+
+## Entendiendo los datos
+
+### Importando librerías
+
+```{python}
+import pandas as pd
+import numpy as np
+```
+
+Establemos una semilla para las cuestiones aleatorias:
+
+```{python}
+seed = 16
+np.random.seed(seed)
+```
+
+### Cargando base de datos
+
+```{python}
+dataset = pd.read_csv('../data/raw/CreditScoring.csv')
+dataset.head()
+```
+
+### Separando la base de datos
+
+```{python}
+X = dataset.drop('SeriousDlqin2yrs', axis=1)
+y = dataset['SeriousDlqin2yrs']
+```
+
+### Dividiendo la base de datos
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.25,
+    stratify=y,
+    random_state=1
+)
+```
+
+## Preparación de los datos
+
+Quitando variables innecesarias.
+
+```{python}
+for X in X_train, X_test:
+    X.drop('ID', axis=1, inplace=True)
+```
+
+Imputando valores faltantes.
+
+```{python}
+MonthlyIncome_median_train = X_train['MonthlyIncome'].median()
+NumberOfDependents_median_train = X_train['NumberOfDependents'].median()
+
+for X in X_train, X_test:
+    X['MonthlyIncome'] = X['MonthlyIncome'].fillna(MonthlyIncome_median_train)
+
+    X['NumberOfDependents'] = X['NumberOfDependents'].fillna(NumberOfDependents_median_train)
+```
+
+## Preámbulo sobre la evaluación de los modelos
+
+### Criterios de evaluación
+
+Las métricas a evaluar son:
+
+* accuracy_score
+* precision_score
+* recall_score
+* entropy
+* ROC-AUC
+
+Las métricas a evaluar las obtendremos con la siguiente función.
+
+```{python}
+def get_metrics(y, y_pred, y_pred_proba):
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, log_loss, roc_auc_score
+    accuracy = accuracy_score(y, y_pred)
+    precision = precision_score(y, y_pred)
+    recall = recall_score(y, y_pred)
+    entropy = log_loss(y, y_pred_proba)
+    roc_auc = roc_auc_score(y, y_pred_proba[:,1])
+    return {'accuracy': round(accuracy, 2), 'precision': round(precision, 2), 'recall': round(recall, 2), 'entropy': round(entropy, 2), 'roc-auc': round(roc_auc, 2)}
+```
+
+Las gráficas de evaluación las obtendremos con la siguiente función.
+
+```{python}
+def create_roc_auc_plot(clf, X_data, y_data):
+    import matplotlib.pyplot as plt
+    from sklearn import metrics
+    metrics.plot_roc_curve(clf, X_data, y_data) 
+    plt.savefig('roc_auc_curve.png')
+```
+
+La matriz de confusión la obtendremos con la siguiente función.
+
+```{python}
+def create_confusion_matrix_plot(clf, X_test, y_test):
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import plot_confusion_matrix
+    plot_confusion_matrix(clf, X_test, y_test)
+    plt.savefig('confusion_matrix.png')
+```
+
+### Definiendo funciones sobre predicción
+
+La siguiente función permite obtener predicciones.
+
+```{python}
+def predict(model, X):
+    y_pred = model.predict(X)
+    return y_pred
+```
+
+La siguiente función permite obtener probabilidades de las predicciones.
+
+```{python}
+def predict_proba(model, X):
+    y_pred_proba = model.predict_proba(X)
+    return y_pred_proba
+```
+
+## Primer experimento
+
+### Regresión logística
+
+```{python}
+def train_logistic_regression(X_train, y_train):
+    from sklearn.linear_model import LogisticRegression
+    logistic_regression = LogisticRegression()
+    logistic_regression.fit(X_train, y_train)
+    return logistic_regression
+```
+
+Entrenando el modelo.
+
+```{python}
+model = train_logistic_regression(X_train, y_train)
+```
+
+Obteniendo predicciones.
+
+```{python}
+y_train_pred = predict(model, X_train)
+y_test_pred = predict(model, X_test)
+```
+
+Obteniendo probabilidades de las predicciones.
+
+```{python}
+y_train_pred_proba = predict_proba(model, X_train)
+y_test_pred_proba = predict_proba(model, X_test)
+```
+
+Obteniendo métricas:
+
+```{python}
+run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+print(run_metrics_train)
+run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+print(run_metrics_test)
+```
+
