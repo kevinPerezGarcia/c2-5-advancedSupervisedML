@@ -4,11 +4,11 @@
 Universidad Nacional de Ingeniería <br>
 Facultad de Ingeniería Económica, Estadística y Ciencias Sociales <br>
 Maestría en Data Science <br>
-Ciclo # <br>
-Curso <br>
-Sesión #. Tema de la sesión
+Ciclo 2 <br>
+Advanced Machine learning <br>
+Tema 7
 
-# Práctica Dirigida o Calificada. Tema
+# Inferencia de ingresos
 
 ## 👥 Alumno
 
@@ -19,10 +19,6 @@ Sesión #. Tema de la sesión
 📞 Para más consultas o colaboraciones, comuníquese a `econ.perez.garcia.k@gmail.com`.
 
 ## 📌 Tabla de contenido
-- [Práctica Dirigida o Calificada. Tema](#práctica-dirigida-o-calificada-tema)
+- [Inferencia de ingresos](#inferencia-de-ingresos)
   - [👥 Alumno](#-alumno)
   - [📌 Tabla de contenido](#-tabla-de-contenido)
-  - [Contenido de la sesión](#contenido-de-la-sesión)
-
-## Contenido de la sesión
-
