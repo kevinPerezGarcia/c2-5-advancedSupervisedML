@@ -151,6 +151,12 @@ import mlflow
 import mlflow.sklearn
 ```
 
+Conectando la sesión de MLflow a Databricks CE:
+
+```{python}
+mlflow.set_tracking_uri("databricks")
+```
+
 ### Regresión logística
 
 ```{python}
