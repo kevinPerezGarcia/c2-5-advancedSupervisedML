@@ -154,7 +154,7 @@ import mlflow.sklearn
 ### Regresión logística
 
 ```{python}
-print("_____ Primer experimento: Regresión logística _____")
+print("_____ Experimento: Regresión logística _____")
 
 exp = mlflow.set_experiment(experiment_name="Regresión Logística")
 
@@ -283,4 +283,70 @@ track_model(run_name="Base", max_depth=7, splitter='best')
 track_model(run_name="Base", max_depth=3, splitter='random')
 track_model(run_name="Base", max_depth=5, splitter='random')
 track_model(run_name="Base", max_depth=7, splitter='random')
+```
+
+### Red neuronal
+
+```{python}
+print("_____ Experimento: Red neuronal _____")
+
+exp = mlflow.set_experiment(experiment_name="Red neuronal")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+def track_model(run_name, hidden_layer_sizes):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Red neuronal",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.neural_network import MLPClassifier
+    model = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, random_state=2024)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Red neuronal")
+
+    params = {
+        'hidden_layer_sizes': hidden_layer_sizes,
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+track_model(run_name="hidden_layer_sizes=25", hidden_layer_sizes=25)
+track_model(run_name="hidden_layer_sizes=50", hidden_layer_sizes=50)
+track_model(run_name="hidden_layer_sizes=75", hidden_layer_sizes=75)
+track_model(run_name="hidden_layer_sizes=100", hidden_layer_sizes=100)
 ```
