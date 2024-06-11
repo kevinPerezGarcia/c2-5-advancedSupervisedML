@@ -162,7 +162,7 @@ mlflow.set_tracking_uri("databricks")
 ```{python}
 print("_____ Experimento: Regresión logística _____")
 
-exp = mlflow.set_experiment(experiment_name="Regresión Logística")
+exp = mlflow.set_experiment(experiment_name="/logisticRegression")
 
 print(f'Nombre del experimento: {exp.name}')
 print(f'ID del experimento: {exp.experiment_id}')
@@ -227,7 +227,7 @@ track_model(run_name="Base", penalty='l2', class_weight='balanced')
 ```{python}
 print("_____ Primer experimento: Arbol de decisión _____")
 
-exp = mlflow.set_experiment(experiment_name="Arbol de decisión")
+exp = mlflow.set_experiment(experiment_name="/treeDecision")
 
 print(f'Nombre del experimento: {exp.name}')
 print(f'ID del experimento: {exp.experiment_id}')
@@ -296,7 +296,7 @@ track_model(run_name="Base", max_depth=7, splitter='random')
 ```{python}
 print("_____ Experimento: Red neuronal _____")
 
-exp = mlflow.set_experiment(experiment_name="Red neuronal")
+exp = mlflow.set_experiment(experiment_name="/neuralNetwork")
 
 print(f'Nombre del experimento: {exp.name}')
 print(f'ID del experimento: {exp.experiment_id}')
@@ -362,7 +362,7 @@ track_model(run_name="hidden_layer_sizes=100", hidden_layer_sizes=100)
 ```{python}
 print("_____ Experimento: Random forest _____")
 
-exp = mlflow.set_experiment(experiment_name="Random forest")
+exp = mlflow.set_experiment(experiment_name="/randomForest")
 
 print(f'Nombre del experimento: {exp.name}')
 print(f'ID del experimento: {exp.experiment_id}')
