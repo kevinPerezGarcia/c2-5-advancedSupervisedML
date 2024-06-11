@@ -215,3 +215,72 @@ def track_model(run_name, penalty, class_weight):
 track_model(run_name="Base", penalty='l2', class_weight=None)
 track_model(run_name="Base", penalty='l2', class_weight='balanced')
 ```
+
+### Arbol de decisión
+
+```{python}
+print("_____ Primer experimento: Arbol de decisión _____")
+
+exp = mlflow.set_experiment(experiment_name="Arbol de decisión")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+def track_model(run_name, max_depth, splitter):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Arbol de decisión",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.tree import DecisionTreeClassifier
+    model = DecisionTreeClassifier(max_depth=max_depth, splitter=splitter, random_state=2024)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Arbol de decisión")
+
+    params = {
+        'max_depth': max_depth,
+        'splitter': splitter
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+track_model(run_name="Base", max_depth=3, splitter='best')
+track_model(run_name="Base", max_depth=5, splitter='best')
+track_model(run_name="Base", max_depth=7, splitter='best')
+track_model(run_name="Base", max_depth=3, splitter='random')
+track_model(run_name="Base", max_depth=5, splitter='random')
+track_model(run_name="Base", max_depth=7, splitter='random')
+```
