@@ -1,2 +1,3 @@
 # Ignoramos base de datos porque supera el límite de tamaño establecido en GitHub
-*.csv
+raw/*.csv
+interm/*.pkl
