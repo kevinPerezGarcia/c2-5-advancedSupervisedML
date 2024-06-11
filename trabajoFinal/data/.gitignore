@@ -1,0 +1,2 @@
+# Ignoramos base de datos porque supera el límite de tamaño establecido en GitHub
+*.csv
