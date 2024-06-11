@@ -32,6 +32,7 @@ Ciclo 2
 * [Tema 4](/tema4/). GAM y GAMLSS
 * [Tema 5](/tema5/). Credit scoring
 * Tema 6. Introducción a la fase de producción en ML. Caso: modelo de inferencia de ingreso
+* [Tema 8](/tema8/). Modelos vía ensamble de algoritmos para clasificiación en credit scoring
 
 *Nota.* Para el tema 6 no se compartió ningún material. Sin embargo, se tomaron apuntes en Notion.
 
