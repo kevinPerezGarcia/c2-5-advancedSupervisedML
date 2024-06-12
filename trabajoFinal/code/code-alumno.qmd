@@ -267,8 +267,8 @@ Se ha registrado información como la fecha de la llamada (FEC_LLAMADA) y el có
 ### Importación de los datos
 
 ```{python}
-data_train = pd.read_csv("../data/data_selec_entre.csv", na_values = [-999])
-data_test = pd.read_csv("../data/data_selec_test.csv", na_values = [-999])
+data_train = pd.read_csv("../data/raw/data_selec_entre.csv", na_values = [-999])
+data_test = pd.read_csv("../data/raw/data_selec_test.csv", na_values = [-999])
 
 data_train.head()
 ```
@@ -955,22 +955,49 @@ plt.show()
 
 ## Preparación de los datos
 
-### Codificando variables categóricas
-```{python}
-# Selecciona las columnas categóricas
-cat_columns = data_train.select_dtypes(include=['category']).columns.tolist()
-
-# Aplica One Hot Encoding sólo a las columnas seleccionadas
-for data in data_train, data_test:
-    data = pd.get_dummies(data, columns=cat_columns, drop_first=True)
-```
+### Eliminando variable temporal
 
 ```{python}
 for data in data_train, data_test:
     data.drop("FEC_LLAMADA", axis=1, inplace=True)
 ```
 
-Separación de la base de datos:
+### Codificando variables categóricas
+
+```{python}
+# Selecciona las columnas categóricas
+cat_columns = data_train.select_dtypes(include=['category']).columns.tolist()
+```
+
+```{python}
+# Aplicar get_dummies
+data_train_dummies = pd.get_dummies(data_train[cat_columns])
+
+# Unir los DataFrames
+data_train = pd.concat([data_train, data_train_dummies], axis=1)
+
+# Eliminar variables categóricas originales
+data_train.drop(cat_columns, axis=1, inplace=True)
+```
+
+```{python}
+# Aplicar get_dummies
+data_test_dummies = pd.get_dummies(data_test[cat_columns])
+
+# Unir los DataFrames
+data_test = pd.concat([data_test, data_test_dummies], axis=1)
+
+# Eliminar variables categóricas originales
+data_test.drop(cat_columns, axis=1, inplace=True)
+```
+
+Quitando variables no vistas en entrenamiento pero sí en el conjunto de prueba:
+
+```{python}
+data_test.drop(['MONTH_12','PROVINCIA_JULCAN','PROVINCIA_SUCRE'], axis=1, inplace=True)
+```
+
+### Separación de la base de datos
 
 ```{python}
 X_train = data_train.drop("TARGET", axis=1)
@@ -979,22 +1006,204 @@ X_test = data_test.drop("TARGET", axis=1)
 y_test = data_test[["TARGET"]]
 ```
 
-Guardando base de datos preparada para el modelado:
+### Guardando base de datos preparada para el modelado
 
 ```{python}
-X_train.to_pickle("../data/interm/X_train.pkl")
-X_test.to_pickle("../data/interm/X_test.pkl")
-y_train.to_pickle("../data/interm/y_train.pkl")
-y_test.to_pickle("../data/interm/y_test.pkl")
+X_train.to_pickle("../data/interm/X_train_preparada.pkl")
+X_test.to_pickle("../data/interm/X_test_preparada.pkl")
+y_train.to_pickle("../data/interm/y_train_preparada.pkl")
+y_test.to_pickle("../data/interm/y_test_preparada.pkl")
 ```
 
-## Modelado
+## Selección de variables
 
 Cargando bases de datos preparadas para el modelado:
 
 ```{python}
-X_train = pd.read_pickle('../data/interm/X_train.pkl')
-X_test = pd.read_pickle('../data/interm/X_test.pkl')
-y_train = pd.read_pickle('../data/interm/y_train.pkl')
-y_test = pd.read_pickle('../data/interm/y_test.pkl')
+import pandas as pd
+X_train_preparada = pd.read_pickle('../data/interm/X_train_preparada.pkl')
+X_test_preparada = pd.read_pickle('../data/interm/X_test_preparada.pkl')
+y_train_preparada = pd.read_pickle('../data/interm/y_train_preparada.pkl')
+y_test_preparada = pd.read_pickle('../data/interm/y_test_preparada.pkl')
+```
+
+```{python}
+from sklearn.ensemble import RandomForestClassifier
+
+# Entrenar el modelo de Random Forest
+model = RandomForestClassifier(n_estimators=100, random_state=2024)
+model.fit(X_train_preparada, y_train_preparada)
+
+# Obtener la importancia de las características
+importances = model.feature_importances_
+
+# Crear un DataFrame con las características y sus importancias
+feature_importances = pd.DataFrame({'feature': X_train_preparada.columns, 'importance': importances})
+
+# Guardando características y sus importancias
+feature_importances.to_pickle('../data/final/feature_importances.pkl')
+```
+
+```{python}
+# Cargar características y sus importancias
+feature_importances = pd.read_pickle('../data/final/feature_importances.pkl')
+
+# Ordenar las características por importancia
+feature_importances = feature_importances.sort_values(by='importance', ascending=False)
+
+# Mostrar las características más importantes
+print(feature_importances)
+
+# Seleccionar las características más importantes (por ejemplo, las 2 más importantes)
+selected_features = feature_importances['feature'].head(10).tolist()
+print("Características seleccionadas:", selected_features)
+```
+
+Manteniendo sólo variables relevantes:
+
+```{python}
+X_train_preparada = X_train_preparada[selected_features]
+X_test_preparada = X_test_preparada[selected_features]
+```
+
+Guardando base de datos preparada con variables seleccionadas para el modelado:
+
+```{python}
+X_train_preparada.to_pickle("../data/final/X_train.pkl")
+X_test_preparada.to_pickle("../data/final/X_test.pkl")
+y_train_preparada.to_pickle("../data/final/y_train.pkl")
+y_test_preparada.to_pickle("../data/final/y_test.pkl")
+```
+
+## Preámbulo sobre la evaluación de modelos
+
+Cargando bases de datos preparadas para el modelado:
+
+```{python}
+import pandas as pd
+X_train = pd.read_pickle('../data/final/X_train.pkl')
+X_test = pd.read_pickle('../data/final/X_test.pkl')
+y_train = pd.read_pickle('../data/final/y_train.pkl')
+y_test = pd.read_pickle('../data/final/y_test.pkl')
+```
+
+### Criterios de evaluación
+
+Las métricas a evaluar son:
+
+* accuracy_score
+* precision_score
+* recall_score
+* entropy
+* ROC-AUC
+
+Las métricas a evaluar las obtendremos con la siguiente función.
+
+```{python}
+def get_metrics(y, y_pred, y_pred_proba):
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, log_loss, roc_auc_score
+    accuracy = accuracy_score(y, y_pred)
+    precision = precision_score(y, y_pred)
+    recall = recall_score(y, y_pred)
+    entropy = log_loss(y, y_pred_proba)
+    roc_auc = roc_auc_score(y, y_pred_proba[:,1])
+    return {'accuracy': round(accuracy, 2), 'precision': round(precision, 2), 'recall': round(recall, 2), 'entropy': round(entropy, 2), 'roc-auc': round(roc_auc, 2)}
+```
+
+### Definiendo funciones sobre predicción
+
+La siguiente función permite obtener predicciones.
+
+```{python}
+def predict(model, X):
+    y_pred = model.predict(X)
+    return y_pred
+```
+
+La siguiente función permite obtener probabilidades de las predicciones.
+
+```{python}
+def predict_proba(model, X):
+    y_pred_proba = model.predict_proba(X)
+    return y_pred_proba
+```
+
+## Modelado
+
+Importando librerías:
+
+```{python}
+import mlflow
+import mlflow.sklearn
+```
+
+Conectando la sesión de MLflow a Databricks CE:
+
+```{python}
+mlflow.set_tracking_uri("databricks")
+```
+
+### Regresión logística
+
+```{python}
+print("_____ Experimento: Regresión logística _____")
+
+exp = mlflow.set_experiment(experiment_name="/logisticRegression")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+def track_model(run_name, penalty, class_weight):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Regresión Logística",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.linear_model import LogisticRegression
+    model = LogisticRegression(penalty=penalty, class_weight=class_weight)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Regresión Logística")
+
+    params = {
+        'penalty': penalty,
+        'class_weight': class_weight
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+track_model(run_name="Base", penalty='l2', class_weight=None)
+track_model(run_name="Base", penalty='l2', class_weight='balanced')
 ```
