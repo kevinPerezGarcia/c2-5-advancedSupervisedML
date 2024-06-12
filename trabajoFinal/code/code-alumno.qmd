@@ -1138,6 +1138,7 @@ mlflow.set_tracking_uri("databricks")
 ### Regresión logística
 
 ```{python}
+#| eval: false
 print("_____ Experimento: Regresión logística _____")
 
 exp = mlflow.set_experiment(experiment_name="/logisticRegression")
@@ -1147,6 +1148,7 @@ print(f'ID del experimento: {exp.experiment_id}')
 ```
 
 ```{python}
+#| eval: false
 def track_model(run_name, penalty, class_weight):
     
     mlflow.start_run(run_name=run_name)
@@ -1196,6 +1198,7 @@ def track_model(run_name, penalty, class_weight):
 ```
 
 ```{python}
+#| eval: false
 track_model(run_name="Base", penalty='l2', class_weight=None)
 track_model(run_name="Base", penalty='l2', class_weight='balanced')
 ```
