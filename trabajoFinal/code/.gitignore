@@ -4,3 +4,6 @@ code-alumno_files/
 code-alumno.html
 code-alumno.ipynb
 img/
+
+# Archivos auxiliares generados por Quarto
+_publish.yml
