@@ -1,0 +1,4 @@
+# Ignoramos base de datos porque supera el límite de tamaño establecido en GitHub
+raw/*.csv
+interm/*.pkl
+final/*.pkl

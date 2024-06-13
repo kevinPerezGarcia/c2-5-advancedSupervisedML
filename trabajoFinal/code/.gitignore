@@ -1,0 +1,9 @@
+.jupyter_cache
+code-alumno_files/
+.vdoc.py
+code-alumno.html
+code-alumno.ipynb
+img/
+
+# Archivos auxiliares generados por Quarto
+_publish.yml

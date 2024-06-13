@@ -40,3 +40,4 @@ Ciclo 2
 ## 📌 Contenido del curso
 
 * [Trabajo inicial](/trabajoInicial/). Modelos AdaBoost y LightGBM vs Modelo GAM
+* [Trabajo Final](/trabajoFinal/). Modelo de contactabilidad - Seguimiento de experimentos y ejecuciones

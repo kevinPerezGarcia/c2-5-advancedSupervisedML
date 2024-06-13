@@ -1,0 +1,1435 @@
+---
+title: Modelo de contactabilidad
+subtitle: Advanced Supervised Machine Learning - Trabajo final
+description: "Seguimiento a los experimentos de aprendizaje automático"
+author:
+    -   name: Kevin Pérez García
+        url: https://kevinperezgarcia.quarto.pub/data-science-portfolio/
+        affiliation: UNI - Maestría de Ciencia de Datos
+        affiliation-url: https://fieecs.uni.edu.pe/maestriasupg/
+title-block-banner: true
+date: today
+thanks: "A ti"
+format:
+    html:
+        toc: true
+        toc-float: true
+        collapsed: false
+        title-block-single: "Elaborado por"
+        theme: readable
+        highlight: kate
+        code-summary: "Ver código"
+        smooth-scroll: true
+        link-external-newwindow: true
+        citations-hover: true
+        footnotes-hover: true
+        warnings: false
+lang: "es"
+jupyter: python3
+execute: 
+    cache: true
+    freeze: true
+    echo: true
+chalkboard: true
+code-overflow: wrap
+---
+
+## Introducción
+
+### Conceptos Previos
+
+**Leads**:
+
+"Leads" es un término comúnmente utilizado en el ámbito del marketing y ventas. Un "lead" se refiere a un individuo o entidad que ha mostrado interés en un producto o servicio, pero que aún no se ha convertido en cliente. Por lo general, un lead ha proporcionado cierta información de contacto (como un número de teléfono o una dirección de correo electrónico) que permite a una empresa seguir comunicándose con él o ella en un intento de convertir ese interés inicial en una venta.
+
+**Contacto Efectivo**:
+
+El término "Contacto Efectivo (CE)" generalmente se refiere a un contacto exitoso con un lead en el cual se cumple el objetivo previsto. Aquí algunos ejemplos de lo que podría considerarse un "contacto efectivo":
+
+* Si el objetivo es simplemente verificar la validez de un número telefónico, entonces un "contacto efectivo" podría ser cuando el titular contesta la llamada.
+* Si el objetivo es vender un producto o servicio, entonces un "contacto efectivo" podría ser cuando el lead muestra un interés genuino o realiza una compra.
+* Si el objetivo es recopilar información o hacer una encuesta, un "contacto efectivo" podría ser cuando el lead responde satisfactoriamente a las preguntas.
+
+En este proyecto se considera que el contacto fue efectivo si el titular contestó la llamada.
+
+### Planteamiento del Problema
+
+Actualmente Interbank es uno de los bancos más grandes y reconocidos de Perú. Interbank ofrece una amplia gama de productos y servicios financieros, que incluyen cuentas de ahorro y corriente, créditos hipotecarios, préstamos personales, tarjetas de crédito, seguros, entre otros.
+
+La contactabilidad es un componente esencial en la operación de un banco. El no tener contactos efectivos, en particular en una institución financiera como Interbank, puede generar una serie de inconvenientes y problemas tanto para la entidad como para sus clientes. Estos son algunos de los problemas que podrían surgir:
+
+1. **Pérdida de Oportunidades de Negocio**: No poder contactar eficazmente a los clientes significa perder oportunidades de ofrecer nuevos productos, servicios o promociones que podrían ser beneficiosos tanto para el banco como para el cliente.
+
+2. **Dificultades en la Gestión de Créditos**: Si un cliente ha solicitado un crédito o tiene pagos pendientes, la falta de comunicación podría resultar en morosidades o malentendidos que afecten la salud financiera del cliente y el portafolio de crédito del banco.
+
+3. **Ineficiencia Operativa**: Cada intento fallido de contacto implica un costo en términos de tiempo y recursos. Aumentar la eficiencia en la contactabilidad puede traducirse en ahorros significativos para la entidad.
+
+4. **Insatisfacción del Cliente**: Si un cliente espera ser contactado para resolver una duda, recibir una oferta o simplemente para confirmar algún dato y no recibe la llamada, esto puede generar insatisfacción y afectar la percepción de servicio.
+
+5. **Limitación en Actualizaciones y Notificaciones**: Muchas veces, los bancos necesitan comunicarse con los clientes para informar sobre cambios en los términos y condiciones, actualizaciones en políticas, o simplemente para notificar sobre movimientos importantes en sus cuentas.
+
+6. **Problemas de Seguridad y Fraude**: La comunicación efectiva es esencial para confirmar transacciones sospechosas o para verificar la identidad del titular. La falta de contacto efectivo puede exponer tanto al banco como al cliente a riesgos de fraude.
+
+7. **Percepción de Mercado**: En un mercado competitivo, la eficiencia en la comunicación y el servicio al cliente son factores clave de diferenciación. Una deficiente tasa de contactabilidad puede afectar negativamente la imagen del banco frente a sus competidores.
+
+8. **Dificultades en Estrategias de Retención**: La contactabilidad efectiva es esencial para ejecutar estrategias de retención. Si un cliente está considerando cerrar una cuenta o dejar un servicio, una comunicación efectiva podría hacer la diferencia para retenerlo.
+
+### Fin
+
+Mejorar la eficiencia del proceso de contacto telefónico.
+
+### Objetivo
+
+Predecir cuáles números telefónicos tienen la mayor probabilidad de resultar en un CE antes de intentar establecer contacto telefónico. 
+
+### Importancia
+
+Optimizar la capacidad de contactar a los clientes de manera efectiva puede traducirse en:
+* mejorar la experiencia del cliente,
+* mejoras operativas,
+* mayores ingresos,
+* reducción de riesgos y
+* una mejor relación con el cliente.
+
+## Importanción de paquetes
+
+```{python}
+# Importación de bibliotecas básicas
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración para visualizaciones
+%matplotlib inline
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 6)
+```
+
+## Adquisición de la base de datos
+
+### Fuente de los datos
+
+* Los conjuntos de datos utilizados en este proyecto fueron proporcionados por "Interbank" (supuesto).
+* Los conjuntos de datos proporcionados fueron:
+  * data_selec_entre: base de datos de entrenamiento
+  * data_selec_test: base de datos de prueba
+* La base de datos incluye variables que describen tanto características del cliente como historiales de contacto.
+
+### Consideraciones
+
+* Los conjuntos de datos presentan 40 variables.
+* En ambos conjuntos de datos, los valores `-999` representan nulos.
+
+### Diccionario de Variables
+
+| #  | Variable             | Descripción                                                                                                                                     |
+|----|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | TOTGEST6             | Cuantas gestiones se le realizo a la persona últimos 6 meses                                                                                    |
+| 2  | TOTGEST12            | Cuantas gestiones se le realizo a la persona últimos 12 meses                                                                                   |
+| 3  | TARGET               | 1: contacto efectivo y 0: no contacto efectivo                                                                                                  |
+| 4  | SEGMENTO             | Segmento                                                                                                                                        |
+| 5  | RECENCIA_APP         | Hace cuanto tiempo has transaccionado con el APP                                                                                                |
+| 6  | RANGO_INGRESOS       | Rango de ingreso                                                                                                                                |
+| 7  | PROVINCIA            | Provincia del cliente                                                                                                                           |
+| 8  | NUMPRIORIZACION      | De donde vino el teléfono (tienda, cajero,compra de datos), regla para definir que tan priorizado es tu teléfono, toma en cuenta al mejor canal |
+| 9  | NT_DISTR6            | Distribición de no tipificados (no se registra la tipificación) los últimos 6 meses                                                             |
+| 10 | NT_DISTR12           | Distribición de no tipificados (no se registra la tipificación) los últimos 12 meses                                                            |
+| 11 | NT_DIAS6             | Dias de la no tipificación los último 6 meses                                                                                                   |
+| 12 | NT_DIAS12            | Dias de la no tipificación los último 12 meses                                                                                                  |
+| 13 | NT_CTD6              | Cantidad de no tipificaciones los últimos 6 meses                                                                                               |
+| 14 | NT_CTD12             | Cantidad de no tipificaciones los últimos 12 meses                                                                                              |
+| 15 | NC_DISTR12           | % Distribución del no contacto en los 12 último meses                                                                                           |
+| 16 | NC_DIAS6             | Días de no contacto en los último 6 meses                                                                                                       |
+| 17 | NC_DIAS12            | Días de no contacto en los último 12 meses                                                                                                      |
+| 18 | NC_CTD6              | Cantidad de no contacto en los últimos 6 meses                                                                                                  |
+| 19 | NC_CTD12             | Cantidad de no contacto en los últimos 12 meses                                                                                                 |
+| 20 | INGRESO_NETO_VIGENTE | Ingreso neto                                                                                                                                    |
+| 21 | INGRESO_BRUTO        | Ingreso bruto                                                                                                                                   |
+| 22 | IDGRUPO              | Es similar al número de priorización, pero solo muestra la fuente por donde vino tu dato                                                        |
+| 23 | FEC_LLAMADA          | Fecha de llamada                                                                                                                                |
+| 24 | FBK_ULT6             | Ultimo Feedback de lo que ocurrio en los útimos 6 meses                                                                                         |
+| 25 | FBK_ULT12            | Ultimo Feedback de lo que ocurrio en los útimos 12 meses                                                                                        |
+| 26 | FBK_BEST6            | El mejor resultado de los último 6 meses                                                                                                        |
+| 27 | FBK_BEST12           | El mejor resultado de los último 12 meses                                                                                                       |
+| 28 | DIAS_ULT6            | Dias del de último feedback de los útimo 6 meses                                                                                                |
+| 29 | DIAS_ULT12           | Dias del de último feedback de los útimo 12 meses                                                                                               |
+| 30 | DIAS_BEST6           | Dias del mejor resultado de los útimo 6 meses                                                                                                   |
+| 31 | DIAS_BEST12          | Dias del mejor resultado de los útimo 12 meses                                                                                                  |
+| 32 | DIAS_ACT             | Cuanto ha sido la cantidad de día que ha sido activo el telefono, es como una resencia                                                          |
+| 33 | DEPARTAMENTO         | Departamento del cliente                                                                                                                        |
+| 34 | COD_SALA             | Codigo de la sala que se llama al teléfono                                                                                                      |
+| 35 | CNE_DISTR6           | Distribución del contacto no efectivo los últimos 6 meses                                                                                       |
+| 36 | CNE_DISTR12          | Distribución del contacto no efectivo los últimos 12 meses                                                                                      |
+| 37 | CNE_DIAS6            | Días de contactos no efectivos útimos 6 meses                                                                                                   |
+| 38 | CNE_DIAS12           | Días de contactos no efectivos útimos 12 meses                                                                                                  |
+| 39 | CNE_CTD6             | Cantidad de contactos no efectivos útimos 6 meses                                                                                               |
+| 40 | CNE_CTD12            | Cantidad de contactos no efectivos útimos 12 meses                                                                                              |
+
+### Descripción General
+
+### *Variable Objetivo*
+
+**TARGET**:
+$$
+TARGET = 
+\begin{cases} 
+1 & \text{if } \text{el contacto fue efectivo} \\
+0 & \text{if } \text{el contacto no fue efectivo} 
+\end{cases}
+$$
+
+Recuerde que el término _efectivo_ se refiere a la contestación por parte del titular del teléfono.
+
+### *Variables Predictoras*
+
+**Historial de Gestiones**:
+
+Tienes variables que indican cuántas veces se ha intentado contactar a un lead en distintos períodos de tiempo (TOTGEST6 y TOTGEST12).
+
+**Información Demográfica del Cliente**:
+
+La base de datos incluye información geográfica del cliente, como la PROVINCIA y el DEPARTAMENTO.
+
+**Información Financiera**:
+
+Se incluye información sobre los ingresos del cliente, tanto netos como brutos (RANGO_INGRESOS, INGRESO_NETO_VIGENTE, INGRESO_BRUTO).
+
+**Historial de Contactos y Resultados**:
+
+Tienes una serie de variables que rastrean no solo si se logró un contacto, sino también detalles sobre la naturaleza de esos contactos. Esto incluye datos sobre contactos que no fueron tipificados, contactos no exitosos y el feedback asociado a esos contactos.
+
+**Segmentación y Prioridad**:
+
+La base contiene información sobre la segmentación del cliente (SEGMENTO), la prioridad del número telefónico (NUMPRIORIZACION), y la fuente del número telefónico (IDGRUPO).
+
+**Interacción Digital**:
+
+Hay una variable (RECENCIA_APP) que parece indicar la reciente interacción del cliente con una aplicación, posiblemente una aplicación móvil o una plataforma digital.
+
+**Detalles Específicos del Contacto**:
+
+Se ha registrado información como la fecha de la llamada (FEC_LLAMADA) y el código de la sala desde donde se realizó la llamada (COD_SALA).
+
+| Categoría                         | #  | Variable             | Descripción                                                                                                                                     |
+|-----------------------------------|----|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| Historial de Gestiones            | 1  | TOTGEST6             | Cuantas gestiones se le realizo a la persona últimos 6 meses                                                                                    |
+| Historial de Gestiones            | 2  | TOTGEST12            | Cuantas gestiones se le realizo a la persona últimos 12 meses                                                                                   |
+| Información Demográfica           | 7  | PROVINCIA            | Provincia del cliente                                                                                                                           |
+| Información Demográfica           | 33 | DEPARTAMENTO         | Departamento del cliente                                                                                                                        |
+| Información Financiera            | 6  | RANGO_INGRESOS       | Rango de ingreso                                                                                                                                |
+| Información Financiera            | 20 | INGRESO_NETO_VIGENTE | Ingreso neto                                                                                                                                    |
+| Información Financiera            | 21 | INGRESO_BRUTO        | Ingreso bruto                                                                                                                                   |
+| Historial de Contactos            | 9  | NT_DISTR6            | Distribución de no tipificados (no se registra la tipificación) los últimos 6 meses                                                             |
+| Historial de Contactos            | 10 | NT_DISTR12           | Distribición de no tipificados (no se registra la tipificación) los últimos 12 meses                                                            |
+| Historial de Contactos            | 11 | NT_DIAS6             | Dias de la no tipificación los último 6 meses                                                                                                   |
+| Historial de Contactos            | 12 | NT_DIAS12            | Dias de la no tipificación los último 12 meses                                                                                                  |
+| Historial de Contactos            | 13 | NT_CTD6              | Cantidad de no tipificaciones los últimos 6 meses                                                                                               |
+| Historial de Contactos            | 14 | NT_CTD12             | Cantidad de no tipificaciones los últimos 12 meses                                                                                              |
+| Historial de Contactos            | 15 | NC_DISTR12           | % Distribución del no contacto en los 12 último meses                                                                                           |
+| Historial de Contactos            | 16 | NC_DIAS6             | Días de no contacto en los último 6 meses                                                                                                       |
+| Historial de Contactos            | 17 | NC_DIAS12            | Días de no contacto en los último 12 meses                                                                                                      |
+| Historial de Contactos            | 18 | NC_CTD6              | Cantidad de no contacto en los últimos 6 meses                                                                                                  |
+| Historial de Contactos            | 19 | NC_CTD12             | Cantidad de no contacto en los últimos 12 meses                                                                                                 |
+| Historial de Contactos            | 24 | FBK_ULT6             | Ultimo Feedback de lo que ocurrio en los útimos 6 meses                                                                                         |
+| Historial de Contactos            | 25 | FBK_ULT12            | Ultimo Feedback de lo que ocurrio en los útimos 12 meses                                                                                        |
+| Historial de Contactos            | 26 | FBK_BEST6            | El mejor resultado de los último 6 meses                                                                                                        |
+| Historial de Contactos            | 27 | FBK_BEST12           | El mejor resultado de los último 12 meses                                                                                                       |
+| Historial de Contactos            | 28 | DIAS_ULT6            | Dias del de último feedback de los útimo 6 meses                                                                                                |
+| Historial de Contactos            | 29 | DIAS_ULT12           | Dias del de último feedback de los útimo 12 meses                                                                                               |
+| Historial de Contactos            | 30 | DIAS_BEST6           | Dias del mejor resultado de los útimo 6 meses                                                                                                   |
+| Historial de Contactos            | 31 | DIAS_BEST12          | Dias del mejor resultado de los útimo 12 meses                                                                                                  |
+| Historial de Contactos            | 35 | CNE_DISTR6           | Distribución del contacto no efectivo los últimos 6 meses                                                                                       |
+| Historial de Contactos            | 36 | CNE_DISTR12          | Distribución del contacto no efectivo los últimos 12 meses                                                                                      |
+| Historial de Contactos            | 37 | CNE_DIAS6            | Días de contactos no efectivos útimos 6 meses                                                                                                   |
+| Historial de Contactos            | 38 | CNE_DIAS12           | Días de contactos no efectivos útimos 12 meses                                                                                                  |
+| Historial de Contactos            | 39 | CNE_CTD6             | Cantidad de contactos no efectivos útimos 6 meses                                                                                               |
+| Historial de Contactos            | 40 | CNE_CTD12            | Cantidad de contactos no efectivos útimos 12 meses                                                                                              |
+| Segmentación y Prioridad          | 4  | SEGMENTO             | Segmento                                                                                                                                        |
+| Segmentación y Prioridad          | 8  | NUMPRIORIZACION      | De donde vino el teléfono (tienda, cajero, compra de datos), regla para definir que tan priorizado es tu teléfono, toma en cuenta al mejor canal |
+| Segmentación y Prioridad          | 22 | IDGRUPO              | Es similar al número de priorización, pero solo muestra la fuente por donde vino tu dato                                                        |
+| Interacción Digital               | 5  | RECENCIA_APP         | Hace cuanto tiempo has transaccionado con el APP                                                                                                |
+| Detalles Específicos del Contacto | 23 | FEC_LLAMADA          | Fecha de llamada                                                                                                                                |
+| Detalles Específicos del Contacto | 34 | COD_SALA             | Código de la sala que se llama al teléfono                                                                                                      |
+| Detalles Específicos del Contacto | 32 | DIAS_ACT             | Cuanto ha sido la cantidad de día que ha sido activo el telefono, es como una recencia                                                          |
+
+### Importación de los datos
+
+```{python}
+data_train = pd.read_csv("../data/raw/data_selec_entre.csv", na_values = [-999])
+data_test = pd.read_csv("../data/raw/data_selec_test.csv", na_values = [-999])
+
+data_train.head()
+```
+
+## Navegando y limpiando los datos
+
+### Restricciones del tipo de datos
+
+**Identificación**
+
+Vamos a identificar si todas las variables se encuentran en el tipo de dato adecuado para su naturaleza. Esto implica determinar si las variables numéricas, categóricas, fechas y texto se encuentran en sus respectivos formatos.
+
+```{python}
+# Obtén una serie con los tipos de datos de cada columna
+data_types_series = data_train.dtypes
+
+# Construye una lista de listas con los nombres de las columnas y los tipos de datos
+data_types_list = [[col, data_types_series[col]] for col in data_types_series.index]
+
+# Construye la tabla Markdown como una string
+markdown_table = "| Variable | Tipo de Dato Actual |\n|----------|--------------|\n"
+for row in data_types_list:
+    markdown_table += f"| {row[0]} | {row[1]} |\n"
+
+# Imprime la tabla Markdown
+print(markdown_table)
+```
+
+Para determinanar si los tipos de datos actuales son correctos o si debiésemos cambiarlos, observemos algunos valores que toman las observaciones:
+
+```{python}
+data_train.head().T
+```
+
+Inspeccionamos los valores únicos que pueden tomar las variables de tipo `object`:
+
+```{python}
+# Filtra las columnas que tienen tipo de dato 'object'
+object_columns = data_train.select_dtypes(include='object').columns
+
+# Obtén los valores únicos para cada columna y los almacena en un diccionario
+unique_values = {}
+for col in object_columns:
+    unique_values[col] = data_train[col].unique()
+
+# Imprime los valores únicos
+for col, values in unique_values.items():
+    print(f"{col}: {values}")
+```
+
+Inspeccionamos los valores únicos que pueden tomar las variables `NUMPRIORIZACION` y `IDGRUPO` de tipo `int64`:
+
+```{python}
+# Filtra las columnas que tienen tipo de dato 'object'
+id_columns = ["NUMPRIORIZACION","IDGRUPO"]
+
+# Obtén los valores únicos para cada columna y los almacena en un diccionario
+unique_values = {}
+for col in id_columns:
+    unique_values[col] = data_train[col].unique()
+
+# Imprime los valores únicos
+for col, values in unique_values.items():
+    print(f"{col}: {values}")
+```
+
+Dado que la variable `NUMPRIORIZACION` toma valores discretos entre 1 y 10 y la variable `IDGRUPO` según el diccionario de variables es similar al númer de priorización, decidimos convertir estas dos variables a tipo `category`:
+
+```{python}
+for data in data_train, data_test:
+    id_columns = ["NUMPRIORIZACION","IDGRUPO"]
+    data[id_columns] = data[id_columns].astype('category')
+```
+
+*Advertencia*: La variable `IDGRUPO` tiene muchas categorías que muestran la fuente por donde vino el dato. La dificultad radica en que no se conoce el significado de cada una de estas categorías. Por lo tanto, se decide eliminar esta variable.
+
+```{python}
+for data in data_train, data_test:
+    data.drop('IDGRUPO', axis=1, inplace=True)
+```
+
+Dado que el diccionario de variables describe a las siguientes variables como:
+* `CNE_DIAS`: "Días de contactos no efectivos útimos 6 meses"
+* `CNE_DIAS1`: "Días de contactos no efectivos útimos 12 meses"
+* `NC_DIAS`: Días de no contacto en los último 6 meses
+* `NC_DIAS1`: Días de no contacto en los último 12 meses
+se puede inferir que los valores que toman estas variables son categorías referidas a días. Hagamos una inspección de los valores únicos que toman estas variables:
+
+```{python}
+dias_columns = ["CNE_DIAS6","CNE_DIAS12","NC_DIAS6","NC_DIAS12"]
+
+# Obtén los valores únicos para cada columna y los almacena en un diccionario
+unique_values = {}
+for col in dias_columns:
+    unique_values[col] = data_train[col].unique()
+
+# Imprime los valores únicos
+for col, values in unique_values.items():
+    print(f"{col}: {values}")
+```
+
+Sin embargo, esta inspección muestra que estas variables se refieren a cantidades de días. Por ende, el tipo de datos de cada uno de estas variables es `int64`. Aunque se están dejando como `float64` para poder realizar operaciones con ellas.
+
+La variable `FEC_LLAMADA` es de tipo `object` pero debería ser de tipo `datetime`.
+
+```{python}
+# Convertir la columna a datetime usando el formato especificado
+for data in data_train, data_test:
+    data['FEC_LLAMADA'] = pd.to_datetime(data['FEC_LLAMADA'], format='%Y-%m-%d')
+```
+
+```{python}
+data_train['FEC_LLAMADA'].head()
+```
+
+El resto de variables del tipo `object` deben ser convertidas al tipo de dato `category`:
+
+```{python}
+# Convertir todas las columnas de tipo 'object' a 'category'
+for data in data_train, data_test:
+    cols_object = data.select_dtypes(include=['object']).columns
+    data[cols_object] = data[cols_object].astype('category')
+```
+
+Aunque sería recomendable convertir algunas variables del tipo `float64` a `int64`, en este caso no lo haremos porque no es necesario.
+
+En resumen, los tipos de datos que las variables toman y deberían tomar (las cuales en realidad ya fueron establecidas) son:
+
+| Tipo de Dato Actual | Tipo de Dato Recomendado | # | Variable             | Descripción                                                                                                    |
+|---------------------|-------------------------|---|----------------------|----------------------------------------------------------------------------------------------------------------|
+| float64             | int64                    | 1 | TOTGEST6             | Cuantas gestiones se le realizo a la persona últimos 6 meses                                                  |
+| float64             | int64                    | 2 | TOTGEST12            | Cuantas gestiones se le realizo a la persona últimos 12 meses                                                 |
+| float64             | int64                    | 13| NT_CTD6              | Cantidad de no tipificaciones los últimos 6 meses                                                            |
+| float64             | int64                    | 14| NT_CTD12             | Cantidad de no tipificaciones los últimos 12 meses                                                           |
+| float64             | int64                    | 18| NC_CTD6              | Cantidad de no contacto en los últimos 6 meses                                                               |
+| float64             | int64                    | 19| NC_CTD12             | Cantidad de no contacto en los últimos 12 meses                                                              |
+| float64             | int64                    | 39| CNE_CTD6             | Cantidad de contactos no efectivos últimos 6 meses                                                           |
+| float64             | int64                    | 40| CNE_CTD12            | Cantidad de contactos no efectivos últimos 12 meses                                                          |
+| float64             | float64                  | 20| INGRESO_NETO_VIGENTE | Ingreso neto                                                                                                  |
+| float64             | float64                  | 21| INGRESO_BRUTO        | Ingreso bruto                                                                                                 |
+| float64             | float64                  | 9 | NT_DISTR6            | Distribución de no tipificados últimos 6 meses                                                                |
+| float64             | float64                  | 10| NT_DISTR12           | Distribución de no tipificados últimos 12 meses                                                               |
+| float64             | float64                  | 11| NT_DIAS6             | Dias de la no tipificación los último 6 meses                                                                 |
+| float64             | float64                  | 12| NT_DIAS12            | Dias de la no tipificación los último 12 meses                                                                |
+| float64             | float64                  | 15| NC_DISTR12           | % Distribución del no contacto en los 12 último meses                                                        |
+| float64             | float64                  | 16| NC_DIAS6             | Días de no contacto en los último 6 meses                                                                     |
+| float64             | float64                  | 17| NC_DIAS12            | Días de no contacto en los último 12 meses                                                                    |
+| float64             | float64                  | 28| DIAS_ULT6            | Dias del de último feedback de los últimos 6 meses                                                            |
+| float64             | float64                  | 29| DIAS_ULT12           | Dias del de último feedback de los últimos 12 meses                                                           |
+| float64             | float64                  | 30| DIAS_BEST6           | Dias del mejor resultado de los últimos 6 meses                                                               |
+| float64             | float64                  | 31| DIAS_BEST12          | Dias del mejor resultado de los últimos 12 meses                                                              |
+| float64             | float64                  | 35| CNE_DISTR6           | Distribución del contacto no efectivo los últimos 6 meses                                                     |
+| float64             | float64                  | 36| CNE_DISTR12          | Distribución del contacto no efectivo los últimos 12 meses                                                    |
+| float64             | float64                  | 37| CNE_DIAS6            | Días de contactos no efectivos últimos 6 meses                                                               |
+| float64             | float64                  | 38| CNE_DIAS12           | Días de contactos no efectivos últimos 12 meses                                                              |
+| float64             | float64                  | 5 | RECENCIA_APP         | Hace cuanto tiempo has transaccionado con el APP                                                             |
+| int64               | int64                    | 32 | DIAS_ACT             | Cuanto ha sido la cantidad de día que ha sido activo el teléfono, es como una recencia                        |
+| object              | datetime                 | 23| FEC_LLAMADA          | Fecha de llamada                                                                                              |
+| int64               | category                 | 8 | NUMPRIORIZACION      | De donde vino el teléfono (tienda, cajero, compra de datos), regla para definir que tan priorizado es tu teléfono |
+| int64               | category                 | 22| IDGRUPO              | Es similar al número de priorización, pero solo muestra la fuente por donde vino tu dato                      |
+| object              | category                 | 7 | PROVINCIA            | Provincia del cliente                                                                                         |
+| object              | category                 | 33| DEPARTAMENTO         | Departamento del cliente                                                                                      |
+| object              | category                 | 6 | RANGO_INGRESOS       | Rango de ingreso                                                                                              |
+| object              | category                 | 24| FBK_ULT6             | Ultimo Feedback de lo que ocurrio en los últimos 6 meses                                                      |
+| object              | category                 | 25| FBK_ULT12            | Ultimo Feedback de lo que ocurrio en los últimos 12 meses                                                     |
+| object              | category                 | 26| FBK_BEST6            | El mejor resultado de los último 6 meses                                                                      |
+| object              | category                 | 27| FBK_BEST12           | El mejor resultado de los último 12 meses                                                                     |
+| object              | category                 | 4 | SEGMENTO             | Segmento                                                                                                      |
+| int64               | category                 | 3 | TARGET               | 1: contacto efectivo y 0: no contacto efectivo                                                               |
+| object              | category                 | 34| COD_SALA             | Código de la sala que se llama al teléfono                                                                    |
+
+### Tratamiento de valores valtantes
+
+Identificamos variables con valores faltantes:
+
+```{python}
+# Cantidad de valores faltantes por variable
+missing_counts = data_train.isnull().sum()
+
+# Frecuencia de valores faltantes por variable
+missing_freq = data_train.isnull().mean() * 100
+
+# Filtrar solo las columnas con valores faltantes
+missing_data = pd.DataFrame({'Missing Count': missing_counts, 'Missing Frequency (%)': missing_freq})
+missing_data = missing_data[missing_data['Missing Count'] > 0].sort_values(by='Missing Count', ascending=False)
+
+print(missing_data)
+```
+
+La decisión que tomaremos para el tratamiento de valores faltantes es la siguiente:
+
+1. **Eliminación de Variables**: 
+   - Si una variable tiene una alta proporción de valores faltantes (por ejemplo, más del 90%), es posible que no proporcione información significativa, por lo que podría considerar eliminarla. 
+   - En este caso, variables como `NT_DIAS6`, `NT_DISTR6`, `NT_CTD6`, `NT_DIAS12`, `NT_DISTR12`, `NT_CTD12`, y `RECENCIA_APP` tienen altas frecuencias de valores faltantes y podrían ser candidatos para eliminación.
+  
+2. **Imputación**:
+   - Para variables con una proporción moderada de valores faltantes (por ejemplo, entre el 20% y el 90%), podría considerar la imputación. Las técnicas de imputación varían según el tipo de datos.
+     - Para variables numéricas: Puedes usar la media, la mediana o incluso modelos más avanzados para imputar (como k-NN o modelos de regresión).
+     - Para variables categóricas: Puedes usar la moda o técnicas de imputación basadas en modelos.
+   - En tu caso, variables como `CNE_CTD6`, `CNE_DIAS6`, `CNE_DISTR6`, `CNE_CTD12`, `CNE_DISTR12`, `CNE_DIAS12`, `NC_CTD6`, `NC_DIAS6`, `NC_DISTR12`, `NC_CTD12`, `NC_DIAS12`, `TOTGEST6`, `DIAS_ULT6`, `DIAS_BEST6`, `DIAS_ULT12`, `DIAS_BEST12`, y `TOTGEST12` podrían beneficiarse de la imputación.
+   
+3. **Tratamiento de Valores Faltantes Pequeños**:
+   - Si la proporción de valores faltantes es muy pequeña (por ejemplo, menos del 5%), podrías considerar varias estrategias:
+     - Imputar con métodos simples (media, mediana, moda).
+     - Eliminar las observaciones con valores faltantes.
+   - Para `INGRESO_NETO_VIGENTE`, `INGRESO_BRUTO`, y `COD_SALA`, podrías utilizar una de estas estrategias.
+
+Aplicamos nuestra decisión de tratamiento:
+
+Eliminado variables con una frecuencia de valores perdidos mayor o igual al 90%:
+
+```{python}
+# Identificar columnas con una frecuencia de valores perdidos mayor o igual al 90%
+cols_a_eliminar = data_train.columns[data.isnull().mean() >= 0.89]
+
+print(cols_a_eliminar)
+```
+
+```{python}
+
+# Eliminar las columnas identificadas
+for data in data_train, data_test:
+    data = data.drop(cols_a_eliminar, axis=1)
+```
+
+Aplicamos las estrategias de imputación en variables numéricas:
+
+Para aquellas variables numéricas con una frecuencia de valores perdidos entre 20% y 90%, se realiza la imputación por k-MM. Sin embargo por ser un proceso que consume mucha memoria RAM y se ejecuta en bastante tiempo, se facilita el código para ello, pero no se hará esta técnica de imputación. Por cuestiones de recursos se utilizará imputación por la media o mediana.
+
+```{python}
+#from fancyimpute import KNN
+
+# Identifica las columnas numéricas con una frecuencia de valores perdidos entre 20% y 89%
+#cols_a_imputar = data.columns[(data.isnull().mean() >= 0.20) & (data.isnull().mean() <= 0.89) & (data.dtypes != 'O')]
+
+# Imputación usando k-NN
+#knn_imputer = KNN(k=5)  # puedes ajustar el valor de k si lo deseas
+#data[cols_a_imputar] = knn_imputer.fit_transform(data[cols_a_imputar])
+```
+
+Para aquellas variables numéricas con una frecuencia de valores perdidos menores de 5%, también se realiza la imputación por la media o mediana.
+
+```{python}
+from scipy.stats import skew
+
+# Filtrar variables numéricas
+numeric_features = data_train.select_dtypes(include=['float64', 'int64'])
+
+# Calcular asimetría para cada variable numérica
+skew_values = numeric_features.apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
+
+# Variables con distribución aproximadamente normal (puedes ajustar el umbral según lo que consideres "cercano a 0")
+normal_vars = skew_values[abs(skew_values) < 0.5].index.tolist()
+
+# Variables asimétricas
+asymmetric_vars = skew_values[abs(skew_values) >= 0.5].index.tolist()
+
+print("Variables con distribución aproximadamente normal:", normal_vars)
+print("Variables asimétricas:", asymmetric_vars)
+```
+
+```{python}
+# Imputar las variables con distribución aproximadamente normal con la media
+for data in data_train, data_test:
+    for var in normal_vars:
+        mean_value = data[var].mean()
+        data[var].fillna(mean_value, inplace=True)
+
+    # Imputar las variables asimétricas con la mediana
+    for var in asymmetric_vars:
+        median_value = data[var].median()
+        data[var].fillna(median_value, inplace=True)
+```
+
+Verificación:
+
+```{python}
+# Cantidad de valores faltantes por variable
+missing_counts = data_train.isnull().sum()
+
+# Frecuencia de valores faltantes por variable
+missing_freq = data_train.isnull().mean() * 100
+
+# Filtrar solo las columnas con valores faltantes
+missing_data = pd.DataFrame({'Missing Count': missing_counts, 'Missing Frequency (%)': missing_freq})
+missing_data = missing_data[missing_data['Missing Count'] > 0].sort_values(by='Missing Count', ascending=False)
+
+print(missing_data)
+```
+
+Eliminamos las observaciones restantes con valores faltantes:
+
+```{python}
+for data in data_train, data_test:
+    data.dropna(inplace=True)
+```
+
+Ahora imputamos las variables categóricas:
+
+```{python}
+# Lista de las variables categóricas
+categorical_vars = data_train.select_dtypes(include=['category', 'object']).columns
+
+# Imputar las variables categóricas con la moda
+for data in data_train, data_test:
+    for var in categorical_vars:
+        mode_value = data[var].mode()[0]
+        data[var].fillna(mode_value, inplace=True)
+```
+
+Verificación:
+
+```{python}
+# Cantidad de valores faltantes por variable
+missing_counts = data_test.isnull().sum()
+
+# Frecuencia de valores faltantes por variable
+missing_freq = data_test.isnull().mean() * 100
+
+# Filtrar solo las columnas con valores faltantes
+missing_data = pd.DataFrame({'Missing Count': missing_counts, 'Missing Frequency (%)': missing_freq})
+missing_data = missing_data[missing_data['Missing Count'] > 0].sort_values(by='Missing Count', ascending=False)
+
+print(missing_data)
+```
+
+Todas las variables numéricas y categóricas se encuentran imputadas.
+
+### Restricciones del rango de datos
+
+Todas las variables numéricas representan ingresos, cantidades o porcentajes, por ende no pueden tomar valores negativos. Realizamos un análisis descriptivo de las variables numéricas para verificar esto:
+
+```{python}
+# Filtrando sólo columnas numéricas
+numeric_data = data_train.select_dtypes(include=['float64', 'int64'])
+
+# Obteniendo descripción numérica
+description = numeric_data.describe()
+print(description)
+```
+
+La variable `DIAS_ACT` que describe la cantidad de días que ha sido activo el teléfono, es como una recencia, no debe tomar valores negativos. Reemplazamos los valores negativos por el valor mínimo que es 0:
+
+```{python}
+for data in data_train, data_test:
+    data.loc[data['DIAS_ACT'] < 0, 'DIAS_ACT'] = 0
+```
+
+### Detección y tratamiento de valores atípicos
+
+Los valores atípicos suelen ser valores que se alejan significativamente de la media o mediana. Una técnica común es utilizar el rango intercuartílico (IQR). Un valor podría ser considerado atípico si se encuentra a más de 1.5 veces el IQR por debajo del primer cuartil o por encima del tercer cuartil.
+
+```{python}
+numeric_vars = data_train.select_dtypes(include=['int64', 'float64']).columns
+
+outlier_columns = []
+
+for col in numeric_vars:
+    Q1 = data_train[col].quantile(0.25)
+    Q3 = data_train[col].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    if data_train[(data_train[col] < lower_bound) | (data_train[col] > upper_bound)].shape[0] > 0:
+        outlier_columns.append(col)
+
+print(outlier_columns)
+```
+
+Realizamos una descripción más detallada de las variables numéricas que presentan valores atípicos:
+
+| Variable | Descripción | Descripción Detallada |
+|---|---|---|
+| TOTGEST6 | Cuantas gestiones se le realizo a la persona últimos 6 meses | Número total de gestiones o acciones realizadas con el cliente en el periodo de los últimos 6 meses. |
+| TOTGEST12 | Cuantas gestiones se le realizo a la persona últimos 12 meses | Número total de gestiones o acciones realizadas con el cliente en el periodo de los últimos 12 meses. |
+| DIAS_ACT | Cuanto ha sido la cantidad de día que ha sido activo el telefono, es como una resencia | Número de días en que el teléfono del cliente ha estado activo; es una medida de cuán reciente ha estado en uso. |
+| DIAS_BEST6 | Dias del mejor resultado de los útimo 6 meses | Días transcurridos desde el mejor resultado o feedback obtenido durante los últimos 6 meses. |
+| DIAS_ULT6 | Dias del de último feedback de los útimo 6 meses | Días transcurridos desde el último feedback registrado durante los últimos 6 meses. |
+| DIAS_BEST12 | Dias del mejor resultado de los útimo 12 meses | Días transcurridos desde el mejor resultado o feedback obtenido durante los últimos 12 meses. |
+| DIAS_ULT12 | Dias del de último feedback de los útimo 12 meses | Días transcurridos desde el último feedback registrado durante los últimos 12 meses. |
+| CNE_CTD12 | Cantidad de contactos no efectivos útimos 12 meses | Número total de intentos de contacto durante los últimos 12 meses que no resultaron en un contacto efectivo. |
+| CNE_CTD6 | Cantidad de contactos no efectivos útimos 6 meses | Número total de intentos de contacto durante los últimos 6 meses que no resultaron en un contacto efectivo. |
+| CNE_DIAS6 | Días de contactos no efectivos útimos 6 meses | Días en que hubo intentos de contacto durante los últimos 6 meses que no resultaron en un contacto efectivo. |
+| CNE_DISTR6 | Distribución del contacto no efectivo los últimos 6 meses | Proporción o porcentaje de intentos de contacto en los últimos 6 meses que no resultaron en un contacto efectivo. |
+| CNE_DISTR12 | Distribución del contacto no efectivo los últimos 12 meses | Proporción o porcentaje de intentos de contacto en los últimos 12 meses que no resultaron en un contacto efectivo. |
+| CNE_DIAS12 | Días de contactos no efectivos útimos 12 meses | Días en que hubo intentos de contacto durante los últimos 12 meses que no resultaron en un contacto efectivo. |
+| NC_CTD12 | Cantidad de no contacto en los últimos 12 meses | Número total de ocasiones en las que no se pudo establecer contacto con el cliente en los últimos 12 meses. |
+| NC_DIAS6 | Días de no contacto en los último 6 meses | Días específicos en los que no se pudo establecer contacto con el cliente durante los últimos 6 meses. |
+| NC_DIAS12 | Días de no contacto en los último 12 meses | Días específicos en los que no se pudo establecer contacto con el cliente durante los últimos 12 meses. |
+| NC_CTD6 | Cantidad de no contacto en los últimos 6 meses | Número total de ocasiones en las que no se pudo establecer contacto con el cliente en los últimos 6 meses. |
+| NC_DISTR12 | % Distribución del no contacto en los 12 último meses | Proporción o porcentaje de veces que no se pudo establecer contacto con el cliente en los últimos 12 meses. |
+| INGRESO_NETO_VIGENTE | Ingreso neto | Ingreso que el cliente recibe después de deducir impuestos y otros gastos. |
+| INGRESO_BRUTO | Ingreso bruto | Ingreso total que el cliente recibe sin tener en cuenta deducciones o gastos. |
+
+No se debe considerar presencia de valores atípicos en las variables que describen porcentajes. Estas variables son: `CNE_DISTR6`, `CNE_DISTR12`, y `NC_DISTR12`.
+
+```{python}
+outlier_columns = [col for col in outlier_columns if col not in ['CNE_DISTR6', 'CNE_DISTR12', 'NC_DISTR12']]
+
+print(outlier_columns)
+```
+
+Mostramos histogramas para visualizar la presencia de valores atípicos en cada una de las variables numéricas que presentan valores atípicos:
+
+```{python}
+# Definir el número de subplots en función de la cantidad de columnas con outliers
+n = len(outlier_columns)
+fig, axes = plt.subplots(n, 1, figsize=(10, 5*n))
+
+# Si solo hay una variable con outliers, "axes" no será una lista, así que lo convertimos en una lista
+if n == 1:
+    axes = [axes]
+
+for i, col in enumerate(outlier_columns):
+    data_train[col].hist(ax=axes[i], bins=50, edgecolor='black')
+    axes[i].set_title(f'Histograma de {col}')
+    axes[i].set_xlabel(col)
+    axes[i].set_ylabel('Frecuencia')
+    # Líneas verticales para mostrar Q1, Q3 y posibles valores atípicos usando IQR
+    Q1 = data_train[col].quantile(0.25)
+    Q3 = data_train[col].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    axes[i].axvline(x=Q1, color='r', linestyle='--', label='Q1')
+    axes[i].axvline(x=Q3, color='g', linestyle='--', label='Q3')
+    axes[i].axvline(x=lower_bound, color='b', linestyle='--', label='Lower Bound')
+    axes[i].axvline(x=upper_bound, color='y', linestyle='--', label='Upper Bound')
+    axes[i].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+Realizamos un análisis descriptivo de estas variables:
+
+Estos histogramas muestran asimetría hacia la derecha. Se procede a aplicar la transformación logarítmica para reducir la asimetría:
+
+```{python}
+for data in data_train, data_test:
+    for column in outlier_columns:
+        if data[column].min() == 0:
+            data[column] = data[column] + 1
+        data[column] = np.log(data[column])
+```
+
+Verificamos que la transformación logarítmica ha reducido la asimetría:
+
+```{python}
+# Definir el número de subplots en función de la cantidad de columnas con outliers
+n = len(outlier_columns)
+fig, axes = plt.subplots(n, 1, figsize=(10, 5*n))
+
+# Si solo hay una variable con outliers, "axes" no será una lista, así que lo convertimos en una lista
+if n == 1:
+    axes = [axes]
+
+for i, col in enumerate(outlier_columns):
+    data_train[col].hist(ax=axes[i], bins=50, edgecolor='black')
+    axes[i].set_title(f'Histograma de {col}')
+    axes[i].set_xlabel(col)
+    axes[i].set_ylabel('Frecuencia')
+    # Líneas verticales para mostrar Q1, Q3 y posibles valores atípicos usando IQR
+    Q1 = data_train[col].quantile(0.25)
+    Q3 = data_train[col].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    axes[i].axvline(x=Q1, color='r', linestyle='--', label='Q1')
+    axes[i].axvline(x=Q3, color='g', linestyle='--', label='Q3')
+    axes[i].axvline(x=lower_bound, color='b', linestyle='--', label='Lower Bound')
+    axes[i].axvline(x=upper_bound, color='y', linestyle='--', label='Upper Bound')
+    axes[i].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+### Tratamiento de variables temporales
+
+Se cuenta con una variable temporal (FEC_LLAMADA) que puede dividirse en año, mes, día, día de la semana.
+
+```{python}
+for data in data_train, data_test:
+    data['YEAR'] = data['FEC_LLAMADA'].dt.year
+    data['MONTH'] = data['FEC_LLAMADA'].dt.month
+    data['WEEKDAY'] = data['FEC_LLAMADA'].dt.weekday  # 0: Monday, 6: Sunday
+```
+
+```{python}
+components = ['YEAR', 'MONTH', 'WEEKDAY']
+
+for data in data_train, data_test:
+    for component in components:
+        data[component] = data[component].astype('category')
+```
+
+Evaluemos los valores únicos que toman estas nuevas variables:
+
+```{python}
+# Evaluar valores únicos para cada componente
+unique_years = data_train['YEAR'].unique()
+unique_months = data_train['MONTH'].unique()
+unique_weekdays = data_train['WEEKDAY'].unique()
+
+print(f"Valores únicos para AÑO: {sorted(unique_years)}")
+print(f"Valores únicos para MES: {sorted(unique_months)}")
+print(f"Valores únicos para DÍA DE LA SEMANA: {sorted(unique_weekdays)}")
+```
+
+```{python}
+# Evaluar valores únicos para cada componente
+unique_years = data_test['YEAR'].unique()
+unique_months = data_test['MONTH'].unique()
+unique_weekdays = data_test['WEEKDAY'].unique()
+
+print(f"Valores únicos para AÑO: {sorted(unique_years)}")
+print(f"Valores únicos para MES: {sorted(unique_months)}")
+print(f"Valores únicos para DÍA DE LA SEMANA: {sorted(unique_weekdays)}")
+```
+
+```{python}
+def get_frequencies(column_name):
+    abs_freq = data_train[column_name].value_counts()
+    rel_freq = data_train[column_name].value_counts(normalize=True) * 100
+    return pd.DataFrame({'Absoluta': abs_freq, 'Porcentual (%)': rel_freq})
+
+# Frecuencias para cada componente
+year_freq = get_frequencies('YEAR')
+month_freq = get_frequencies('MONTH')
+weekday_freq = get_frequencies('WEEKDAY')
+
+print("Frecuencias para AÑO:\n", year_freq, "\n")
+print("Frecuencias para MES:\n", month_freq, "\n")
+print("Frecuencias para DÍA DE LA SEMANA:\n", weekday_freq)
+```
+
+Dado que la variable `FEC_LLAMADA` presenta frecuencias porcentuales bajas para los valores 5 y 6, estos serán recodificados al valor de 5 que representará el fin de semana.
+
+```{python}
+# Recodificar valores
+for data in data_train, data_test:
+    data['WEEKDAY'] = data['WEEKDAY'].replace({6: 5})
+
+    # Comprobar las nuevas frecuencias
+    weekday_freq_updated = get_frequencies('WEEKDAY')
+    print("Frecuencias actualizadas para DÍA DE LA SEMANA:\n", weekday_freq_updated)
+```
+
+## Análisis exploratorio de datos
+---
+
+Nuestra base de datos presenta las siguientes variables:
+
+```{python}
+# Obtén una serie con los tipos de datos de cada columna
+data_types_series = data_train.dtypes
+
+# Construye una lista de listas con los nombres de las columnas y los tipos de datos
+data_types_list = [[col, data_types_series[col]] for col in data_types_series.index]
+
+# Construye la tabla Markdown como una string
+markdown_table = "| Variable | Tipo de Dato Actual |\n|----------|--------------|\n"
+for row in data_types_list:
+    markdown_table += f"| {row[0]} | {row[1]} |\n"
+
+# Imprime la tabla Markdown
+print(markdown_table)
+```
+
+### Análisis univariado
+
+### *De variables numéricas*
+
+```{python}
+for column in data_train.select_dtypes(include=['float64', 'int64']).columns:
+    plt.figure(figsize=(10, 5))
+    
+    # Histograma
+    plt.subplot(1, 2, 1)
+    sns.histplot(data_train[column], bins=50, kde=True)
+    plt.title(f'Distribución de {column}')
+    
+    # Boxplot
+    plt.subplot(1, 2, 2)
+    sns.boxplot(y=data_train[column])
+    plt.title(f'Boxplot de {column}')
+    
+    plt.tight_layout()
+    plt.show()
+```
+
+### *De variables categóricas*
+
+```{python}
+categorical_columns = data_train.select_dtypes(include=['category', 'object']).columns
+
+for column in categorical_columns:
+    print(f"Frecuencias de {column}:")
+    print(data_train[column].value_counts(normalize=True) * 100)
+    print("\n")
+```
+
+```{python}
+for column in categorical_columns:
+    plt.figure(figsize=(10, 5))
+    sns.countplot(data=data_train, x=column, order=data_train[column].value_counts().index)
+    plt.title(f'Distribución de {column}')
+    plt.xticks(rotation=45)
+    plt.show()
+```
+
+### Análisis bivariado
+
+### *Correlaciones para variables numéricas*
+
+```{python}
+numeric_cols = data_train.select_dtypes(include=['float64', 'int64']).columns
+
+correlation_matrix = data_train[numeric_cols].corr()
+
+# Visualizar la matriz de correlación con Seaborn
+plt.figure(figsize=(15, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
+plt.title("Matriz de Correlación")
+plt.show()
+```
+
+Los resultados de las correlaciones muestran que las variables `DIAS_ACT`, `DIAS_BEST6`, `DIAS_BEST12`, `DIAS_ULT6`, `DIAS_ULT12`, `CNE_CTD6`, `CNE_CTD12`, `CNE_DIAS6`, `CNE_DIAS12`, `CNE_DISTR6`, `CNE_DISTR12`, `NC_CTD6`, `NC_CTD12`, `NC_DIAS6`, `NC_DIAS12`, `NC_DISTR12`, `TOTGEST6`, `TOTGEST12`, `INGRESO_NETO_VIGENTE`, `INGRESO_BRUTO` tienen una correlación baja con la variable objetivo `TARGET`.
+
+Por otro lado, las variables que presentan una alta correlación con la variable objetivo `TARGET` son `NUMPRIORIZACION` y `SEGMENTO`.
+
+### Análisis de la variable objetivo
+
+```{python}
+# Frecuencia absoluta
+frec_abs = data_train['TARGET'].value_counts()
+
+# Frecuencia relativa (porcentual)
+frec_rel = data_train['TARGET'].value_counts(normalize=True) * 100
+
+# Consolidar ambas frecuencias en un solo DataFrame
+desc_stats = pd.DataFrame({'Frecuencia Absoluta': frec_abs,
+                           'Frecuencia Porcentual (%)': frec_rel})
+
+print(desc_stats)
+```
+
+```{python}
+# Gráfico de barras
+plt.figure(figsize=(8, 6))
+sns.countplot(data=data_train, x='TARGET')
+plt.title("Distribución de la variable objetivo 'TARGET'")
+plt.ylabel("Cantidad")
+plt.xlabel("Valor de TARGET (0 = No Contacto Efectivo, 1 = Contacto Efectivo)")
+plt.show()
+```
+
+Mostramos la relación entre la variable objetivo y otras variables categóricas:
+
+```{python}
+cat_vars = data_train.select_dtypes(include=['object', 'category']).columns.tolist()
+
+# Si deseas excluir la variable objetivo de esta lista (en caso de que sea categórica)
+if 'TARGET' in cat_vars:
+    cat_vars.remove('TARGET')
+```
+
+```{python}
+# Configurar el tamaño de los gráficos
+plt.figure(figsize=(15, 5 * len(cat_vars)))
+
+for i, var in enumerate(cat_vars, 1):
+    plt.subplot(len(cat_vars), 1, i)
+    sns.countplot(data=data_train, x=var, hue='TARGET')
+    plt.title(f"Relación entre TARGET y {var}")
+    plt.ylabel("Cantidad")
+    plt.legend(title="TARGET", labels=["No Contacto Efectivo", "Contacto Efectivo"])
+
+plt.tight_layout()
+plt.show()
+```
+
+## Preparación de los datos
+
+### Eliminando variable temporal
+
+```{python}
+for data in data_train, data_test:
+    data.drop("FEC_LLAMADA", axis=1, inplace=True)
+```
+
+### Codificando variables categóricas
+
+```{python}
+# Selecciona las columnas categóricas
+cat_columns = data_train.select_dtypes(include=['category']).columns.tolist()
+```
+
+```{python}
+# Aplicar get_dummies
+data_train_dummies = pd.get_dummies(data_train[cat_columns])
+
+# Unir los DataFrames
+data_train = pd.concat([data_train, data_train_dummies], axis=1)
+
+# Eliminar variables categóricas originales
+data_train.drop(cat_columns, axis=1, inplace=True)
+```
+
+```{python}
+# Aplicar get_dummies
+data_test_dummies = pd.get_dummies(data_test[cat_columns])
+
+# Unir los DataFrames
+data_test = pd.concat([data_test, data_test_dummies], axis=1)
+
+# Eliminar variables categóricas originales
+data_test.drop(cat_columns, axis=1, inplace=True)
+```
+
+Quitando variables no vistas en entrenamiento pero sí en el conjunto de prueba:
+
+```{python}
+data_test.drop(['MONTH_12','PROVINCIA_JULCAN','PROVINCIA_SUCRE'], axis=1, inplace=True)
+```
+
+### Separación de la base de datos
+
+```{python}
+X_train = data_train.drop("TARGET", axis=1)
+y_train = data_train[["TARGET"]]
+X_test = data_test.drop("TARGET", axis=1)
+y_test = data_test[["TARGET"]]
+```
+
+### Guardando base de datos preparada para el modelado
+
+```{python}
+X_train.to_pickle("../data/interm/X_train_preparada.pkl")
+X_test.to_pickle("../data/interm/X_test_preparada.pkl")
+y_train.to_pickle("../data/interm/y_train_preparada.pkl")
+y_test.to_pickle("../data/interm/y_test_preparada.pkl")
+```
+
+## Selección de variables
+
+Cargando bases de datos preparadas para el modelado:
+
+```{python}
+import pandas as pd
+X_train_preparada = pd.read_pickle('../data/interm/X_train_preparada.pkl')
+X_test_preparada = pd.read_pickle('../data/interm/X_test_preparada.pkl')
+y_train_preparada = pd.read_pickle('../data/interm/y_train_preparada.pkl')
+y_test_preparada = pd.read_pickle('../data/interm/y_test_preparada.pkl')
+```
+
+```{python}
+#| eval: false
+from sklearn.ensemble import RandomForestClassifier
+
+# Entrenar el modelo de Random Forest
+model = RandomForestClassifier(n_estimators=100, random_state=2024)
+model.fit(X_train_preparada, y_train_preparada)
+
+# Obtener la importancia de las características
+importances = model.feature_importances_
+
+# Crear un DataFrame con las características y sus importancias
+feature_importances = pd.DataFrame({'feature': X_train_preparada.columns, 'importance': importances})
+
+# Guardando características y sus importancias
+feature_importances.to_pickle('../data/final/feature_importances.pkl')
+```
+
+```{python}
+# Cargar características y sus importancias
+feature_importances = pd.read_pickle('../data/final/feature_importances.pkl')
+
+# Ordenar las características por importancia
+feature_importances = feature_importances.sort_values(by='importance', ascending=False)
+
+# Mostrar las características más importantes
+print(feature_importances)
+
+# Seleccionar las características más importantes (por ejemplo, las 2 más importantes)
+selected_features = feature_importances['feature'].head(10).tolist()
+print("Características seleccionadas:", selected_features)
+```
+
+Manteniendo sólo variables relevantes:
+
+```{python}
+X_train_preparada = X_train_preparada[selected_features]
+X_test_preparada = X_test_preparada[selected_features]
+```
+
+Guardando base de datos preparada con variables seleccionadas para el modelado:
+
+```{python}
+X_train_preparada.to_pickle("../data/final/X_train.pkl")
+X_test_preparada.to_pickle("../data/final/X_test.pkl")
+y_train_preparada.to_pickle("../data/final/y_train.pkl")
+y_test_preparada.to_pickle("../data/final/y_test.pkl")
+```
+
+## Preámbulo sobre la evaluación de modelos
+
+Cargando bases de datos preparadas para el modelado:
+
+```{python}
+import pandas as pd
+X_train = pd.read_pickle('../data/final/X_train.pkl')
+X_test = pd.read_pickle('../data/final/X_test.pkl')
+y_train = pd.read_pickle('../data/final/y_train.pkl')
+y_test = pd.read_pickle('../data/final/y_test.pkl')
+```
+
+### Criterios de evaluación
+
+Las métricas a evaluar son:
+
+* accuracy_score
+* precision_score
+* recall_score
+* entropy
+* ROC-AUC
+
+Las métricas a evaluar las obtendremos con la siguiente función.
+
+```{python}
+def get_metrics(y, y_pred, y_pred_proba):
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, log_loss, roc_auc_score
+    accuracy = accuracy_score(y, y_pred)
+    precision = precision_score(y, y_pred)
+    recall = recall_score(y, y_pred)
+    entropy = log_loss(y, y_pred_proba)
+    roc_auc = roc_auc_score(y, y_pred_proba[:,1])
+    return {'accuracy': round(accuracy, 2), 'precision': round(precision, 2), 'recall': round(recall, 2), 'entropy': round(entropy, 2), 'roc-auc': round(roc_auc, 2)}
+```
+
+### Definiendo funciones sobre predicción
+
+La siguiente función permite obtener predicciones.
+
+```{python}
+def predict(model, X):
+    y_pred = model.predict(X)
+    return y_pred
+```
+
+La siguiente función permite obtener probabilidades de las predicciones.
+
+```{python}
+def predict_proba(model, X):
+    y_pred_proba = model.predict_proba(X)
+    return y_pred_proba
+```
+
+## Modelado
+
+Importando librerías:
+
+```{python}
+#| eval: false
+import mlflow
+import mlflow.sklearn
+```
+
+Conectando la sesión de MLflow a Databricks CE:
+
+```{python}
+#| eval: false
+mlflow.set_tracking_uri("databricks")
+```
+
+### Regresión logística
+
+```{python}
+#| eval: false
+print("_____ Experimento: Regresión logística _____")
+
+exp = mlflow.set_experiment(experiment_name="/logisticRegression")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+#| eval: false
+def track_model(run_name, penalty, class_weight):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Regresión Logística",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.linear_model import LogisticRegression
+    model = LogisticRegression(penalty=penalty, class_weight=class_weight)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Regresión Logística")
+
+    params = {
+        'penalty': penalty,
+        'class_weight': class_weight
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+#| eval: false
+track_model(run_name="Base", penalty='l2', class_weight=None)
+track_model(run_name="Base", penalty='l2', class_weight='balanced')
+```
+
+### Arbol de decisión
+
+```{python}
+#| eval: false
+print("_____ Experimento: Arbol de decisión _____")
+
+exp = mlflow.set_experiment(experiment_name="/treeDecision")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+#| eval: false
+def track_model(run_name, max_depth, splitter):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Arbol de decisión",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.tree import DecisionTreeClassifier
+    model = DecisionTreeClassifier(max_depth=max_depth, splitter=splitter, random_state=2024)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Arbol de decisión")
+
+    params = {
+        'max_depth': max_depth,
+        'splitter': splitter
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+#| eval: false
+track_model(run_name="max_depth=3, splitter='best'", max_depth=3, splitter='best')
+track_model(run_name="max_depth=5, splitter='best'", max_depth=5, splitter='best')
+track_model(run_name="max_depth=7, splitter='best'", max_depth=7, splitter='best')
+track_model(run_name="max_depth=3, splitter='random'", max_depth=3, splitter='random')
+track_model(run_name="max_depth=5, splitter='random'", max_depth=5, splitter='random')
+track_model(run_name="max_depth=7, splitter='random'", max_depth=7, splitter='random')
+```
+
+### Red neuronal
+
+```{python}
+#| eval: false
+print("_____ Experimento: Red neuronal _____")
+
+exp = mlflow.set_experiment(experiment_name="/neuralNetwork")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+#| eval: false
+def track_model(run_name, hidden_layer_sizes):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Red neuronal",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.neural_network import MLPClassifier
+    model = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, random_state=2024)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Red neuronal")
+
+    params = {
+        'hidden_layer_sizes': hidden_layer_sizes,
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+#| eval: false
+track_model(run_name="hidden_layer_sizes=25", hidden_layer_sizes=25)
+track_model(run_name="hidden_layer_sizes=50", hidden_layer_sizes=50)
+track_model(run_name="hidden_layer_sizes=75", hidden_layer_sizes=75)
+track_model(run_name="hidden_layer_sizes=100", hidden_layer_sizes=100)
+```
+
+### Random forest
+
+```{python}
+#| eval: false
+print("_____ Experimento: Random forest _____")
+
+exp = mlflow.set_experiment(experiment_name="/randomForest")
+
+print(f'Nombre del experimento: {exp.name}')
+print(f'ID del experimento: {exp.experiment_id}')
+```
+
+```{python}
+#| eval: false
+def track_model(run_name, n_estimators, max_depth):
+    
+    mlflow.start_run(run_name=run_name)
+
+    run = mlflow.active_run()
+    print(f'Nombre de la ejecución activa es: {run.info.run_name}')
+    print(f'ID de la ejecución activa es: {run.info.run_id}')
+
+    tags = {
+        "Modelo": "Random forest",
+    }
+    mlflow.set_tags(tags)
+
+    # Entrenando el modelo:
+    from sklearn.ensemble import RandomForestClassifier
+    model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=2024)
+    model.fit(X_train, y_train)
+
+    mlflow.sklearn.log_model(model, "Random forest")
+
+    params = {
+        'n_estimators': n_estimators,
+        'max_depth': max_depth
+    }
+    mlflow.log_params(params)
+
+    # Obteniendo predicciones:
+    y_train_pred = predict(model, X_train)
+    y_test_pred = predict(model, X_test)
+
+    # Obteniendo probabilidades de las predicciones:
+    y_train_pred_proba = predict_proba(model, X_train)
+    y_test_pred_proba = predict_proba(model, X_test)
+
+    # Obteniendo métricas:
+    run_metrics_train = get_metrics(y_train, y_train_pred, y_train_pred_proba)
+    run_metrics_test = get_metrics(y_test, y_test_pred, y_test_pred_proba)
+
+    print(run_metrics_train)
+    print(run_metrics_test)
+
+    # Rastreando métricas sólo del conjunto de prueba
+    for metric in run_metrics_test:
+        mlflow.log_metric(metric, run_metrics_test[metric])
+
+    mlflow.end_run()
+```
+
+```{python}
+#| eval: false
+track_model(run_name="n_estimators=25 & max_depth=5", n_estimators=25, max_depth=5)
+track_model(run_name="n_estimators=25 & max_depth=10", n_estimators=50, max_depth=10)
+track_model(run_name="n_estimators=25 & max_depth=5", n_estimators=25, max_depth=5)
+track_model(run_name="n_estimators=25 & max_depth=10", n_estimators=50, max_depth=10)
+```
+
+### Eligiendo el mejor modelo
+
+Se compara el rendimiento de los modelos en [Databricks CE](). En la figura @fig-experimentos se muestran todos los experimentos realizados. Estos cuatro experimentos contienen en total 16 modelos como se muestra en la figura @fig-todos_experimentos.
+
+![Experimentos realizados](img/experimentos.png){#fig-experimentos}
+
+![Total de experimentos](img/todos_experimentos.png){#fig-todos_experimentos}
+
+La figura @fig-comparacion_modelos muestra el rendimiento de estos modelos basados primero en ROC_AUC, segundo en recall y por último en precisión.
+
+![Métricas de los modelos](img/comparacion_modelos.png){#fig-comparacion_modelos}
+
+Los parámetros usados en los modelos se muestra en la figura @fig-parametros.
+
+![Parámetros de los modelos](img/parametros.png){#fig-parametros}
+
+## Conclusión
+
+El mejor modelo resultó ser una red neuronal con un tamaño de capas ocultas igual a 50. Los mejores modelos fueron redes neuronales, seguido de random forest con n_estimators=25 y max_depth=5. Seguido de un árbol de decisión con max_depth=5 y splitter='best'. Por último, se encuentran el resto de modelos de árboles de decisión y regresión logística.
